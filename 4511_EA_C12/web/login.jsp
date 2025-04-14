@@ -3,26 +3,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>AIB Web System - Sign Up</title>
+    <title>AIB Web System - Login</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <div class="container">
         <div class="logo">Acer International Bakery</div>
-        <h1>Sign Up as <%= request.getParameter("role") %></h1>
-        <form action="CreateAccountServlet" method="post">
+        <h1>Login as <%= request.getParameter("role") %></h1>
+        <form action="LoginServlet" method="post">
             <input type="hidden" name="role" value="<%= request.getParameter("role") %>">
             <label>Email:</label>
             <input type="email" name="email" required>
-            <label>Name:</label>
-            <input type="text" name="name" required>
             <label>Password:</label>
             <input type="password" name="password" required>
-            <label>Confirm Password:</label>
-            <input type="password" name="confirmPassword" required>
-            <input type="submit" value="Create Account">
+            <input type="submit" value="Login">
         </form>
-        <p><a href="login.jsp?role=<%= request.getParameter("role") %>">Back to Login</a></p>
+        <p><a href="createAccount.jsp?role=<%= request.getParameter("role") %>">Create new account</a></p>
+        <p><a href="index.jsp">Back to Role Selection</a></p>
     </div>
 </body>
 </html>

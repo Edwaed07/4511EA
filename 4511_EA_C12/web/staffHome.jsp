@@ -7,15 +7,23 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <h1>Welcome, <%= session.getAttribute("username") %>!</h1>
-    <nav>
-        <ul>
-            <li><a href="reserveFruit.jsp">Reserve Fruits (from source city)</a></li>
-            <li><a href="borrowFruit.jsp">Borrow Fruits (from shops in the same city)</a></li>
-            <li><a href="checkReserve.jsp">Check Reserve Records</a></li>
-            <li><a href="updateStock.jsp">Update Fruit Stock Level</a></li>
-            <li><a href="logout">Logout</a></li>
-        </ul>
-    </nav>
+    <%
+        if (session.getAttribute("email") == null || !"shopStaff".equals(session.getAttribute("role"))) {
+            response.sendRedirect("index.jsp");
+        }
+    %>
+    <div class="container">
+        <div class="logo">Acer International Bakery</div>
+        <h1>Welcome, <%= session.getAttribute("email") %>!</h1>
+        <nav>
+            <ul>
+                <li><a href="reserveFruit.jsp">Reserve Fruits (from source city)</a></li>
+                <li><a href="borrowFruit.jsp">Borrow Fruits (from shops in the same city)</a></li>
+                <li><a href="checkReserve.jsp">Check Reserve Records</a></li>
+                <li><a href="updateStock.jsp">Update Fruit Stock Level</a></li>
+                <li><a href="logout">Logout</a></li>
+            </ul>
+        </nav>
+    </div>
 </body>
 </html>

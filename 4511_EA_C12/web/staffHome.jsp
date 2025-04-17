@@ -14,9 +14,9 @@
         <nav>
             <ul>
                 <li><a href="index.jsp">Home</a></li>
-                <li><a href="FruitServlet">View Fruits</a></li>
-                <li><a href="ReserveFruitServlet">Reserve Fruit</a></li>
-                <li><a href="BorrowFruitServlet">Borrow Fruit</a></li>
+                <li><a href="borrowFruit.jsp">Borrow Fruit</a></li>
+                <li><a href="reserveFruit.jsp">Reserve Fruit</a></li>
+                <li><a href="checkReserve.jsp">Check Reservations</a></li>
                 <li><a href="LogoutServlet">Logout</a></li>
             </ul>
         </nav>

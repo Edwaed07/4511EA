@@ -14,31 +14,43 @@
         <nav>
             <ul>
                 <li><a href="index.jsp">Home</a></li>
-                <li><a href="login.jsp?role=<%= request.getParameter("role") %>">Login</a></li>
+                <li><a href="login.jsp?role=shopStaff">Login</a></li>
             </ul>
         </nav>
-        <h1>Sign Up as <%= request.getParameter("role") %></h1>
+        <h1>Sign Up as Shop Staff</h1>
         <c:if test="${not empty error}">
             <p class="error">${error}</p>
         </c:if>
-        <form action="CreateAccountServlet" method="post">
-            <input type="hidden" name="role" value="<%= request.getParameter("role") %>">
-            <label>Email:</label>
-            <input type="email" name="email" required>
-            <label>Name:</label>
-            <input type="text" name="email" required>
-            <label>Password:</label>
-            <input type="password" name="password" required>
-            <label>Confirm Password:</label>
-            <input type="password" name="confirmPassword" required>
+        <form action="CreateAccountServlet" method="post" class="login-form">
+            <input type="hidden" name="role" value="shopStaff">
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password:</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required>
+            </div>
+            <div class="form-group">
+                <label for="branch">Branch:</label>
+                <input type="text" id="branch" name="branch" required placeholder="e.g., TKY3">
+            </div>
             <input type="submit" value="Create Account">
         </form>
         <p style="text-align: center; margin-top: 15px;">
-            <a href="login.jsp?role=<%= request.getParameter("role") %>">Back to Login</a>
+            <a href="login.jsp?role=shopStaff">Back to Login</a>
         </p>
     </div>
     <footer>
-        &copy; 2025 Acer International Bakery. All rights reserved.
+        © 2025 Acer International Bakery. All rights reserved.
     </footer>
 </body>
 </html>

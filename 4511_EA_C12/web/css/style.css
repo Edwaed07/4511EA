@@ -8,8 +8,8 @@
 
 /* Body styles */
 body {
-    background-color: #f4f7fa;
-    color: #333;
+    background-color: #f8fafc;
+    color: #1a202c;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -17,115 +17,255 @@ body {
 
 /* Container styles */
 .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 30px;
+    width: 100%; /* 全寬 */
+    padding: 40px 20px; /* 增加垂直間距 */
     flex: 1;
 }
 
 /* Logo styles */
 .logo {
-    font-size: 24px;
-    font-weight: bold;
-    color: #2c3e50;
-    margin-bottom: 20px;
+    font-size: 28px; /* 更大字體 */
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 30px;
     text-align: center;
+    letter-spacing: 1px; /* 增加字距 */
 }
 
 /* Navigation bar */
 nav {
-    background-color: #2c3e50;
-    padding: 10px 0;
-    margin-bottom: 30px;
+    background-color: #2d3748;
+    padding: 15px 0; /* 增加內距 */
+    margin-bottom: 40px;
 }
 
 nav ul {
     list-style: none;
     display: flex;
     justify-content: center;
-    gap: 20px;
+    gap: 30px; /* 更大間距 */
 }
 
 nav ul li a {
-    color: #fff;
+    color: #edf2f7;
     text-decoration: none;
-    font-weight: 500;
-    padding: 8px 16px;
-    border-radius: 4px;
-    transition: background-color 0.3s;
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: 6px;
+    transition: background-color 0.3s ease, transform 0.2s;
 }
 
 nav ul li a:hover {
-    background-color: #34495e;
+    background-color: #4a5568;
+    transform: translateY(-2px); /* 懸停微抬效果 */
 }
 
 /* Headings */
 h1 {
-    font-size: 28px;
-    color: #2c3e50;
-    margin-bottom: 20px;
+    font-size: 32px; /* 更大標題 */
+    color: #2d3748;
+    margin-bottom: 30px;
     text-align: center;
+    font-weight: 700;
 }
 
 h2 {
-    font-size: 22px;
-    color: #2c3e50;
-    margin-bottom: 15px;
+    font-size: 24px;
+    color: #2d3748;
+    margin-bottom: 20px;
     text-align: center;
+    font-weight: 600;
 }
 
 /* Paragraphs */
 p {
     font-size: 16px;
-    color: #555;
+    color: #4a5568;
     text-align: center;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 
 /* Forms */
 form {
     background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    max-width: 400px;
-    margin: 0 auto;
+    padding: 25px; /* 更大內距 */
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%; /* 全寬 */
 }
 
-form label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 500;
-    color: #2c3e50;
+/* 篩選表單 */
+form.filter-form {
+    margin: 1.5rem 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem; /* 更大間距 */
+    flex-wrap: wrap;
 }
 
-form input[type="email"],
-form input[type="text"],
-form input[type="password"],
-form input[type="number"],
-form select {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 16px;
+form.filter-form label {
+    font-weight: 600;
+    font-size: 1rem; /* 稍大字體 */
+    color: #2d3748;
 }
 
-form input[type="submit"] {
-    background-color: #3498db;
-    color: #fff;
+form.filter-form select,
+form.filter-form input[type="number"] {
+    padding: 0.5rem; /* 增加 5px (0.45rem ≈ 7.2px) */
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 1rem;
+    width: 140px; /* 更寬輸入框 */
+    background-color: #f7fafc;
+    transition: border-color 0.2s ease;
+}
+
+form.filter-form select:focus,
+form.filter-form input[type="number"]:focus {
+    border-color: #3182ce;
+    outline: none;
+}
+
+form.filter-form input[type="submit"] {
+    padding: 0.5rem 1.5rem; /* 增加 5px */
+    background-color: #3182ce;
+    color: white;
     border: none;
-    padding: 10px 20px;
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s;
-    width: 100%;
+    font-size: 1rem;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, transform 0.2s;
 }
 
-form input[type="submit"]:hover {
-    background-color: #2980b9;
+form.filter-form input[type="submit"]:hover {
+    background-color: #2b6cb0;
+    transform: translateY(-2px);
+}
+
+/* 登入表單 */
+form.login-form {
+    margin: 1.5rem auto;
+    max-width: 400px; /* 限制寬度 */
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+form.login-form .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+form.login-form label {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #2d3748;
+}
+
+form.login-form input[type="email"],
+form.login-form input[type="password"] {
+    padding: 0.5rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 1rem;
+    width: 100%; /* 表單內全寬 */
+    background-color: #f7fafc;
+    transition: border-color 0.2s ease;
+}
+
+form.login-form input[type="email"]:focus,
+form.login-form input[type="password"]:focus {
+    border-color: #3182ce;
+    outline: none;
+}
+
+form.login-form input[type="submit"] {
+    padding: 0.5rem 1.5rem;
+    background-color: #3182ce;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, transform 0.2s;
+    align-self: center; /* 按鈕居中 */
+}
+
+form.login-form input[type="submit"]:hover {
+    background-color: #2b6cb0;
+    transform: translateY(-2px);
+}
+
+/* 篩選條件 */
+.filter-info {
+    margin: 1rem 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem; /* 更大間距 */
+    font-size: 1rem;
+    color: #2d3748;
+    font-weight: 500;
+}
+
+/* 借用表單（Action 欄） */
+form.action-form {
+    display: flex;
+    flex-direction: column; /* 分兩行 */
+    align-items: flex-start; /* 左對齊 */
+    gap: 0.5rem; /* 行間距 */
+    padding: 0.5rem;
+}
+
+form.action-form label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #2d3748;
+}
+
+form.action-form select,
+form.action-form input[type="number"] {
+    padding: 0.4rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    width: 85px; /* 增加 5px (80px → 85px) */
+    background-color: #f7fafc;
+}
+
+form.action-form input[type="submit"] {
+    padding: 0.45rem 0.9rem; /* 增加 5px (0.4rem → 0.45rem) */
+    background-color: #38a169;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    width: 85px; /* 與選擇框對齊 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, transform 0.2s;
+}
+
+form.action-form input[type="submit"]:hover {
+    background-color: #2f855a;
+    transform: translateY(-2px);
+}
+
+/* 借用表單內部容器（Branch 和 Borrow 分行） */
+form.action-form .branch-group,
+form.action-form .borrow-group {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
 }
 
 /* Tables */
@@ -133,41 +273,55 @@ table {
     width: 100%;
     border-collapse: collapse;
     background-color: #fff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+    border-radius: 10px;
+    overflow: hidden; /* 圓角效果 */
 }
 
 table th, table td {
-    padding: 12px;
+    padding: 15px; /* 更大間距 */
     text-align: left;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 0.95rem;
 }
 
 table th {
-    background-color: #2c3e50;
-    color: #fff;
+    background-color: #2d3748;
+    color: #edf2f7;
+    font-weight: 600;
 }
 
 table tr:hover {
-    background-color: #f9f9f9;
+    background-color: #f7fafc;
 }
+
+/* 表格欄位寬度 */
+table th:nth-child(1), table td:nth-child(1) { width: 15%; } /* Name */
+table th:nth-child(2), table td:nth-child(2) { width: 20%; } /* Source City */
+table th:nth-child(3), table td:nth-child(3) { width: 15%; } /* Country */
+table th:nth-child(4), table td:nth-child(4) { width: 15%; } /* Branch */
+table th:nth-child(5), table td:nth-child(5) { width: 10%; } /* Stock */
+table th:nth-child(6), table td:nth-child(6) { width: 25%; } /* Action */
 
 /* Messages */
 .error {
-    color: #e74c3c;
-    margin-bottom: 15px;
+    color: #e53e3e;
+    margin-bottom: 20px;
     text-align: center;
+    font-weight: 500;
 }
 
 .success {
-    color: #27ae60;
-    margin-bottom: 15px;
+    color: #38a169;
+    margin-bottom: 20px;
     text-align: center;
+    font-weight: 500;
 }
 
 /* Links */
 a {
-    color: #3498db;
+    color: #3182ce;
     text-decoration: none;
 }
 
@@ -175,93 +329,90 @@ a:hover {
     text-decoration: underline;
 }
 
-/* Role selection styles */
-.role-selection {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-    margin-top: 20px;
-}
-
-.role-selection p {
-    margin: 0;
-    width: 100%;
-    text-align: center;
-}
-
-.role-selection a {
-    display: inline-block;
-    width: 100%;
-    max-width: 300px;
-    padding: 10px 20px;
-    background-color: #3498db;
-    color: #fff;
-    border-radius: 4px;
-    text-align: center;
-    transition: background-color 0.3s;
-}
-
-.role-selection a:hover {
-    background-color: #2980b9;
-    text-decoration: none;
-}
-
 /* Footer */
 footer {
     text-align: center;
-    padding: 20px;
-    background-color: #2c3e50;
-    color: #fff;
+    padding: 25px;
+    background-color: #2d3748;
+    color: #edf2f7;
     width: 100%;
-    position: fixed;
-    bottom: 0;
+    font-size: 0.95rem;
 }
 
 /* Responsive design */
 @media (max-width: 768px) {
     .container {
-        padding: 15px;
+        padding: 20px 15px;
     }
 
     nav ul {
         flex-direction: column;
-        gap: 10px;
+        gap: 15px;
     }
 
-    form {
+    form.filter-form select,
+    form.filter-form input[type="number"] {
+        width: 120px;
+    }
+
+    .filter-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    form.action-form select,
+    form.action-form input[type="number"],
+    form.action-form input[type="submit"] {
+        width: 80px;
+    }
+
+    table th, table td {
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+
+    form.login-form {
         max-width: 100%;
     }
 
-    .role-selection a {
-        max-width: 250px;
-        padding: 8px 16px;
-        font-size: 14px;
-    }
-
-    table {
-        font-size: 14px;
+    form.login-form input[type="email"],
+    form.login-form input[type="password"] {
+        width: 100%;
     }
 }
 
 @media (max-width: 480px) {
     .container {
-        padding: 10px;
+        padding: 15px 10px;
     }
 
     .logo {
-        font-size: 20px;
-    }
-
-    h1 {
         font-size: 24px;
     }
 
-    .role-selection a {
-        max-width: 200px;
+    h1 {
+        font-size: 28px;
     }
 
-    table {
-        font-size: 12px;
+    form.filter-form select,
+    form.filter-form input[type="number"] {
+        width: 100px;
+    }
+
+    form.action-form select,
+    form.action-form input[type="number"],
+    form.action-form input[type="submit"] {
+        width: 75px;
+    }
+
+    table th, table td {
+        padding: 8px;
+        font-size: 0.85rem;
+    }
+
+    form.login-form input[type="email"],
+    form.login-form input[type="password"] {
+        width: 100%;
     }
 }

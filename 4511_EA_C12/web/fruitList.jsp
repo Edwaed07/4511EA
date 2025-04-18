@@ -13,7 +13,9 @@
         <div class="logo">Acer International Bakery</div>
         <nav>
             <ul>
-                <li><a href="index.jsp">Home</a></li>
+                <li><a href="FruitServlet?page=borrowFruit">Borrow Fruit</a></li>
+                <li><a href="reserveFruit.jsp">Reserve Fruit</a></li>
+                <li><a href="checkReserve.jsp">Check Reservations</a></li>
                 <li><a href="FruitServlet">Fruit List</a></li>
                 <li><a href="LogoutServlet">Logout</a></li>
             </ul>
@@ -31,7 +33,7 @@
                 <th>ID</th>
                 <th>Name</th>
                 <th>Source City</th>
-                <th>Stock Level</th>
+                <th>Stock (box)</th>
             </tr>
             <c:forEach var="fruit" items="${fruits}">
                 <tr>

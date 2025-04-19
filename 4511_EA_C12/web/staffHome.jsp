@@ -15,7 +15,7 @@
             <ul>
                 <li><a href="index.jsp">Home</a></li>
                 <li><a href="FruitServlet?page=borrowFruit">Borrow Fruit</a></li>
-                <li><a href="UpdateStockServlet">Update Stock</a></li>
+                <li><a href="updateStock.jsp">Update Stock</a></li>
                 <li><a href="CheckReserveServlet">Check Reservations</a></li>
                 <li><a href="FruitServlet">Fruit List</a></li>
                 <li><a href="LogoutServlet">Logout</a></li>

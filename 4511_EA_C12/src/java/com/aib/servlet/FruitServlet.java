@@ -54,27 +54,11 @@ public class FruitServlet extends HttpServlet {
             }
 
             if (page.equals("borrowFruit")) {
-                String sourceCity = request.getParameter("sourceCity");
-                String branch = request.getParameter("branch");
                 String country = request.getParameter("country");
+                String sourceCity = request.getParameter("sourceCity");
+                String[] branches = request.getParameterValues("branch");
                 String minStock = request.getParameter("minStock");
                 String maxStock = request.getParameter("maxStock");
-
-                List<String> sourceCities = new ArrayList<>();
-                try (PreparedStatement stmt = conn.prepareStatement("SELECT DISTINCT source_city FROM branch_inventory ORDER BY source_city")) {
-                    ResultSet rs = stmt.executeQuery();
-                    while (rs.next()) {
-                        sourceCities.add(rs.getString("source_city"));
-                    }
-                }
-
-                List<String> branches = new ArrayList<>();
-                try (PreparedStatement stmt = conn.prepareStatement("SELECT DISTINCT branch FROM branch_inventory ORDER BY branch")) {
-                    ResultSet rs = stmt.executeQuery();
-                    while (rs.next()) {
-                        branches.add(rs.getString("branch"));
-                    }
-                }
 
                 List<String> countries = new ArrayList<>();
                 try (PreparedStatement stmt = conn.prepareStatement("SELECT DISTINCT f.country FROM fruits f JOIN branch_inventory bi ON f.name = bi.fruit_name ORDER BY f.country")) {
@@ -84,23 +68,44 @@ public class FruitServlet extends HttpServlet {
                     }
                 }
 
+                List<String> sourceCities = new ArrayList<>();
+                try (PreparedStatement stmt = conn.prepareStatement("SELECT DISTINCT source_city FROM branch_inventory ORDER BY source_city")) {
+                    ResultSet rs = stmt.executeQuery();
+                    while (rs.next()) {
+                        sourceCities.add(rs.getString("source_city"));
+                    }
+                }
+
+                List<String> allBranches = new ArrayList<>();
+                try (PreparedStatement stmt = conn.prepareStatement("SELECT DISTINCT branch FROM branch_inventory ORDER BY branch")) {
+                    ResultSet rs = stmt.executeQuery();
+                    while (rs.next()) {
+                        allBranches.add(rs.getString("branch"));
+                    }
+                }
+
                 List<Fruit> fruits = new ArrayList<>();
                 StringBuilder sql = new StringBuilder(
                         "SELECT bi.fruit_name, bi.source_city, f.country, bi.branch, bi.stock_level, f.id " +
                         "FROM branch_inventory bi JOIN fruits f ON bi.fruit_name = f.name AND bi.source_city = f.source_city WHERE 1=1");
                 List<Object> params = new ArrayList<>();
 
+                if (country != null && !country.isEmpty()) {
+                    sql.append(" AND f.country = ?");
+                    params.add(country);
+                }
                 if (sourceCity != null && !sourceCity.isEmpty()) {
                     sql.append(" AND bi.source_city = ?");
                     params.add(sourceCity);
                 }
-                if (branch != null && !branch.isEmpty()) {
-                    sql.append(" AND bi.branch = ?");
-                    params.add(branch);
-                }
-                if (country != null && !country.isEmpty()) {
-                    sql.append(" AND f.country = ?");
-                    params.add(country);
+                if (branches != null && branches.length > 0) {
+                    sql.append(" AND bi.branch IN (");
+                    for (int i = 0; i < branches.length; i++) {
+                        sql.append("?");
+                        if (i < branches.length - 1) sql.append(",");
+                        params.add(branches[i]);
+                    }
+                    sql.append(")");
                 }
                 if (minStock != null && !minStock.isEmpty()) {
                     sql.append(" AND bi.stock_level >= ?");
@@ -143,7 +148,7 @@ public class FruitServlet extends HttpServlet {
                             List<String> availableBranches = new ArrayList<>();
                             while (branchRs.next()) {
                                 String branchOption = branchRs.getString("branch");
-                                if (!branchOption.equals(branch)) {
+                                if (!branchOption.equals(employeeBranch)) {
                                     availableBranches.add(branchOption);
                                 }
                             }
@@ -153,12 +158,12 @@ public class FruitServlet extends HttpServlet {
                 }
 
                 request.setAttribute("fruits", fruits);
-                request.setAttribute("sourceCities", sourceCities);
-                request.setAttribute("branches", branches);
                 request.setAttribute("countries", countries);
-                request.setAttribute("selectedSourceCity", sourceCity);
-                request.setAttribute("selectedBranch", branch);
+                request.setAttribute("sourceCities", sourceCities);
+                request.setAttribute("branches", allBranches);
                 request.setAttribute("selectedCountry", country);
+                request.setAttribute("selectedSourceCity", sourceCity);
+                request.setAttribute("selectedBranches", branches);
                 request.setAttribute("minStock", minStock);
                 request.setAttribute("maxStock", maxStock);
                 request.getRequestDispatcher("borrowFruit.jsp").forward(request, response);

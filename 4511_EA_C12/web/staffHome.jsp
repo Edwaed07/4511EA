@@ -15,8 +15,8 @@
             <ul>
                 <li><a href="index.jsp">Home</a></li>
                 <li><a href="FruitServlet?page=borrowFruit">Borrow Fruit</a></li>
-                <li><a href="reserveFruit.jsp">Reserve Fruit</a></li>
-                <li><a href="checkReserve.jsp">Check Reservations</a></li>
+                <li><a href="UpdateStockServlet">Update Stock</a></li>
+                <li><a href="CheckReserveServlet">Check Reservations</a></li>
                 <li><a href="FruitServlet">Fruit List</a></li>
                 <li><a href="LogoutServlet">Logout</a></li>
             </ul>
@@ -24,7 +24,7 @@
         <h1>Welcome, Bakery Shop Staff!</h1>
         <div class="user-info">
             <p><strong>Name:</strong> ${sessionScope.name}</p>
-             <p><strong>Email:</strong> ${sessionScope.email}</p>
+            <p><strong>Email:</strong> ${sessionScope.email}</p>
             <p><strong>Branch:</strong> ${sessionScope.employeeBranch}</p>
             <p><strong>Role:</strong> ${sessionScope.role}</p>
         </div>

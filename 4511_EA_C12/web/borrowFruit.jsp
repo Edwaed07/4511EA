@@ -13,9 +13,10 @@
         <div class="logo">4511 Bakery</div>
         <nav>
             <ul>
+                <li><a href="index.jsp">Home</a></li>
                 <li><a href="FruitServlet?page=borrowFruit">Borrow Fruit</a></li>
-                <li><a href="reserveFruit.jsp">Reserve Fruit</a></li>
-                <li><a href="checkReserve.jsp">Check Reservations</a></li>
+                <li><a href="UpdateStockServlet">Update Stock</a></li>
+                <li><a href="CheckReserveServlet">Check Reservations</a></li>
                 <li><a href="FruitServlet">Fruit List</a></li>
                 <li><a href="LogoutServlet">Logout</a></li>
             </ul>
@@ -35,6 +36,13 @@
 
         <form action="FruitServlet?page=borrowFruit" method="get" class="filter-form">
             <input type="hidden" name="page" value="borrowFruit">
+            <label for="country">Country:</label>
+            <select name="country" id="country">
+                <option value="">All Countries</option>
+                <c:forEach var="country" items="${countries}">
+                    <option value="${country}" <c:if test="${country == selectedCountry}">selected</c:if>>${country}</option>
+                </c:forEach>
+            </select>
             <label for="sourceCity">Source City:</label>
             <select name="sourceCity" id="sourceCity">
                 <option value="">All Cities</option>
@@ -47,13 +55,6 @@
                 <option value="">All Branches</option>
                 <c:forEach var="branch" items="${branches}">
                     <option value="${branch}" <c:if test="${branch == selectedBranch}">selected</c:if>>${branch}</option>
-                </c:forEach>
-            </select>
-            <label for="country">Country:</label>
-            <select name="country" id="country">
-                <option value="">All Countries</option>
-                <c:forEach var="country" items="${countries}">
-                    <option value="${country}" <c:if test="${country == selectedCountry}">selected</c:if>>${country}</option>
                 </c:forEach>
             </select>
             <label for="minStock">Stock Range:</label>
@@ -101,7 +102,7 @@
                 <th>Name</th>
                 <th>Source City</th>
                 <th>Country</th>
-                <th>Branch</th>
+                <th>Lender Branch</th>
                 <th>Stock</th>
                 <th>Action</th>
             </tr>
@@ -118,17 +119,9 @@
                                 <input type="hidden" name="page" value="borrowFruit">
                                 <input type="hidden" name="fruitId" value="${fruit.id}">
                                 <div class="branch-group">
-                                    <label for="branch_${fruit.id}_${branchEntry.key}">Branch:</label>
-                                    <select name="branch" id="branch_${fruit.id}_${branchEntry.key}">
-                                        <c:forEach var="availBranch" items="${fruit.availableBranches}">
-                                            <c:if test="${availBranch != selectedBranch}">
-                                                <option value="${availBranch}" <c:if test="${availBranch == branchEntry.key}">selected</c:if>>${availBranch}</option>
-                                            </c:if>
-                                        </c:forEach>
-                                        <c:if test="${empty fruit.availableBranches}">
-                                            <option value="">No branches available</option>
-                                        </c:if>
-                                    </select>
+                                    <label>Borrow Branch:</label>
+                                    <span>${sessionScope.employeeBranch}</span>
+                                    <input type="hidden" name="branch" value="${branchEntry.key}">
                                 </div>
                                 <div class="borrow-group">
                                     <input type="number" name="quantity" min="1" max="${branchEntry.value}" required>

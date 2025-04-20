@@ -18,14 +18,15 @@ import javax.servlet.http.HttpSession;
 @WebServlet(name = "CheckReserveServlet", urlPatterns = {"/CheckReserveServlet"})
 public class CheckReserveServlet extends HttpServlet {
 
-    public static class ReserveRecord {
+    // 借貨記錄類
+    public static class BorrowRecord {
         private String fruitName;
         private String borrowBranch;
         private String lenderBranch;
         private int quantity;
         private String borrowDate;
 
-        public ReserveRecord(String fruitName, String borrowBranch, String lenderBranch, int quantity, String borrowDate) {
+        public BorrowRecord(String fruitName, String borrowBranch, String lenderBranch, int quantity, String borrowDate) {
             this.fruitName = fruitName;
             this.borrowBranch = borrowBranch;
             this.lenderBranch = lenderBranch;
@@ -49,6 +50,38 @@ public class CheckReserveServlet extends HttpServlet {
         public void setBorrowDate(String borrowDate) { this.borrowDate = borrowDate; }
     }
 
+    // 訂貨記錄類
+    public static class ReserveRecord {
+        private String fruitName;
+        private String branch;
+        private String sourceCity;
+        private int quantity;
+        private String reserveDate;
+
+        public ReserveRecord(String fruitName, String branch, String sourceCity, int quantity, String reserveDate) {
+            this.fruitName = fruitName;
+            this.branch = branch;
+            this.sourceCity = sourceCity;
+            this.quantity = quantity;
+            this.reserveDate = reserveDate;
+        }
+
+        public String getFruitName() { return fruitName; }
+        public void setFruitName(String fruitName) { this.fruitName = fruitName; }
+
+        public String getBranch() { return branch; }
+        public void setBranch(String branch) { this.branch = branch; }
+
+        public String getSourceCity() { return sourceCity; }
+        public void setSourceCity(String sourceCity) { this.sourceCity = sourceCity; }
+
+        public int getQuantity() { return quantity; }
+        public void setQuantity(int quantity) { this.quantity = quantity; }
+
+        public String getReserveDate() { return reserveDate; }
+        public void setReserveDate(String reserveDate) { this.reserveDate = reserveDate; }
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -67,28 +100,61 @@ public class CheckReserveServlet extends HttpServlet {
                 return;
             }
 
-            List<ReserveRecord> reserveRecords = new ArrayList<>();
-            String sql = "SELECT f.name AS fruit_name, br.borrow_branch, br.lender_branch, br.quantity, br.borrow_date " +
-                        "FROM borrow_records br " +
-                        "JOIN fruits f ON br.fruit_id = f.id " +
-                        "WHERE br.borrow_branch = ? OR br.lender_branch = ?";
-            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-                stmt.setString(1, employeeBranch);
-                stmt.setString(2, employeeBranch);
-                ResultSet rs = stmt.executeQuery();
-                while (rs.next()) {
-                    reserveRecords.add(new ReserveRecord(
-                        rs.getString("fruit_name"),
-                        rs.getString("borrow_branch"),
-                        rs.getString("lender_branch"),
-                        rs.getInt("quantity"),
-                        rs.getString("borrow_date")
-                    ));
-                }
-                System.out.println("Reserve Records found: " + reserveRecords.size());
+            // 獲取篩選參數
+            String filter = request.getParameter("filter");
+            if (filter == null || filter.isEmpty()) {
+                filter = "both";
             }
 
+            // 查詢借貨記錄
+            List<BorrowRecord> borrowRecords = new ArrayList<>();
+            if (!filter.equals("reserve")) {
+                String borrowSql = "SELECT f.name AS fruit_name, br.borrow_branch, br.lender_branch, br.quantity, br.borrow_date " +
+                                  "FROM borrow_records br " +
+                                  "JOIN fruits f ON br.fruit_id = f.id " +
+                                  "WHERE br.borrow_branch = ? OR br.lender_branch = ?";
+                try (PreparedStatement stmt = conn.prepareStatement(borrowSql)) {
+                    stmt.setString(1, employeeBranch);
+                    stmt.setString(2, employeeBranch);
+                    ResultSet rs = stmt.executeQuery();
+                    while (rs.next()) {
+                        borrowRecords.add(new BorrowRecord(
+                            rs.getString("fruit_name"),
+                            rs.getString("borrow_branch"),
+                            rs.getString("lender_branch"),
+                            rs.getInt("quantity"),
+                            rs.getString("borrow_date")
+                        ));
+                    }
+                    System.out.println("Borrow Records found: " + borrowRecords.size());
+                }
+            }
+            request.setAttribute("borrowRecords", borrowRecords);
+
+            // 查詢訂貨記錄
+            List<ReserveRecord> reserveRecords = new ArrayList<>();
+            if (!filter.equals("borrow")) {
+                String reserveSql = "SELECT f.name AS fruit_name, rr.branch, rr.source_city, rr.quantity, rr.reserve_date " +
+                                   "FROM reserve_records rr " +
+                                   "JOIN fruits f ON rr.fruit_id = f.id " +
+                                   "WHERE rr.branch = ?";
+                try (PreparedStatement stmt = conn.prepareStatement(reserveSql)) {
+                    stmt.setString(1, employeeBranch);
+                    ResultSet rs = stmt.executeQuery();
+                    while (rs.next()) {
+                        reserveRecords.add(new ReserveRecord(
+                            rs.getString("fruit_name"),
+                            rs.getString("branch"),
+                            rs.getString("source_city"),
+                            rs.getInt("quantity"),
+                            rs.getString("reserve_date")
+                        ));
+                    }
+                    System.out.println("Reserve Records found: " + reserveRecords.size());
+                }
+            }
             request.setAttribute("reserveRecords", reserveRecords);
+
             request.getRequestDispatcher("checkReserve.jsp").forward(request, response);
         } catch (SQLException e) {
             session.setAttribute("connectionStatus", "Database error: " + e.getMessage());

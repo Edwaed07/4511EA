@@ -10,14 +10,14 @@
 </head>
 <body>
     <div class="container">
-        <div class="logo">4511 Bakery</div>
+        <div class="logo">Acer International Bakery</div>
         <nav>
             <ul>
-                <li><a href="index.jsp">Home</a></li>
+                <li><a href="staffHome.jsp">Home</a></li>
+                <li><a href="updateStockServlet">Shop Stock</a></li>
+                <li><a href="FruitServlet">Reserve Fruit</a></li>
                 <li><a href="FruitServlet?page=borrowFruit">Borrow Fruit</a></li>
-                <li><a href="updateStock.jsp">Update Stock</a></li>
                 <li><a href="CheckReserveServlet">Check Reservations</a></li>
-                <li><a href="FruitServlet">Fruit List</a></li>
                 <li><a href="LogoutServlet">Logout</a></li>
             </ul>
         </nav>
@@ -30,7 +30,7 @@
         </div>
     </div>
     <footer>
-        © 2025 4511 Bakery. All rights reserved.
+        © 2025 Acer International Bakery.
     </footer>
 </body>
 </html>

@@ -10,7 +10,7 @@
 </head>
 <body>
     <div class="container">
-        <div class="logo"> Bakery</div>
+        <div class="logo">Acer International Bakery</div>
         <nav>
             <ul>
                 <li><a href="index.jsp">Home</a></li>

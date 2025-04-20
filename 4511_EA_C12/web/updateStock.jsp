@@ -10,18 +10,18 @@
 </head>
 <body>
     <div class="container">
-        <div class="logo">4511 Bakery</div>
+        <div class="logo">Acer International Bakery</div>
         <nav>
             <ul>
-                <li><a href="index.jsp">Home</a></li>
+                <li><a href="staffHome.jsp">Home</a></li>
+                <li><a href="updateStockServlet">Shop Stock</a></li>
+                <li><a href="FruitServlet">Reserve Fruit</a></li>
                 <li><a href="FruitServlet?page=borrowFruit">Borrow Fruit</a></li>
-                <li><a href="updateStockServlet">Update Stock</a></li>
                 <li><a href="CheckReserveServlet">Check Reservations</a></li>
-                <li><a href="FruitServlet">Fruit List</a></li>
                 <li><a href="LogoutServlet">Logout</a></li>
             </ul>
         </nav>
-        <h1>Update Stock</h1>
+        <h1>View Stock</h1>
 
         <c:if test="${not empty error}">
             <p class="error">${error}</p>
@@ -40,20 +40,18 @@
                 <table>
                     <tr>
                         <th>Fruit Name</th>
+                        <th>Source City</th>
+                        <th>Country</th>                        
                         <th>Stock Level</th>
-                        <th>Action</th>
+
                     </tr>
                     <c:forEach var="stock" items="${stockList}">
                         <tr>
                             <td>${stock.fruitName}</td>
+                            <td>${stock.sourceCity}</td>
+                            <td>${stock.country}</td>                            
                             <td>${stock.stockLevel}</td>
-                            <td>
-                                <form action="updateStockServlet" method="post">
-                                    <input type="hidden" name="fruitName" value="${stock.fruitName}">
-                                    <input type="number" name="newStockLevel" min="0" value="${stock.stockLevel}" required>
-                                    <input type="submit" value="Update">
-                                </form>
-                            </td>
+
                         </tr>
                     </c:forEach>
                 </table>
@@ -65,7 +63,7 @@
         </p>
     </div>
     <footer>
-        © 2025 4511 Bakery. All rights reserved.
+        © 2025 Acer International Bakery.
     </footer>
 </body>
 </html>

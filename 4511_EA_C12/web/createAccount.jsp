@@ -50,7 +50,7 @@
         </p>
     </div>
     <footer>
-        © 2025 Acer International Bakery. All rights reserved.
+        © 2025 Acer International Bakery.
     </footer>
 </body>
 </html>

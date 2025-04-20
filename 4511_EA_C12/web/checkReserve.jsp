@@ -13,11 +13,11 @@
         <div class="logo">Acer International Bakery</div>
         <nav>
             <ul>
-                <li><a href="index.jsp">Home</a></li>
+                <li><a href="staffHome.jsp">Home</a></li>
+                <li><a href="updateStockServlet">Shop Stock</a></li>
+                <li><a href="FruitServlet">Reserve Fruit</a></li>
                 <li><a href="FruitServlet?page=borrowFruit">Borrow Fruit</a></li>
-                <li><a href="updateStock.jsp">Update Stock</a></li>
                 <li><a href="CheckReserveServlet">Check Reservations</a></li>
-                <li><a href="FruitServlet">Fruit List</a></li>
                 <li><a href="LogoutServlet">Logout</a></li>
             </ul>
         </nav>
@@ -32,31 +32,72 @@
             <p class="success">${success}</p>
         </c:if>
 
-        <h2>Reservation Records for Branch: ${sessionScope.employeeBranch}</h2>
+        <!-- 篩選表單 -->
+        <form action="CheckReserveServlet" method="get" class="filter-form">
+            <label for="filter">Filter Records:</label>
+            <select name="filter" id="filter" onchange="this.form.submit()">
+                <option value="both" ${param.filter == 'both' || empty param.filter ? 'selected' : ''}>Show Both</option>
+                <option value="borrow" ${param.filter == 'borrow' ? 'selected' : ''}>Show Borrow Records</option>
+                <option value="reserve" ${param.filter == 'reserve' ? 'selected' : ''}>Show Reserve Records</option>
+            </select>
+        </form>
 
-        <c:if test="${empty reserveRecords}">
-            <p class="error">No reservation records found for this branch.</p>
+        <h2>Records for Branch: ${sessionScope.employeeBranch}</h2>
+
+        <!-- 借貨記錄 -->
+        <c:if test="${param.filter != 'reserve' || empty param.filter}">
+            <h3>Borrow Records</h3>
+            <c:if test="${empty borrowRecords}">
+                <p class="error">No borrow records found for this branch.</p>
+            </c:if>
+            <c:if test="${not empty borrowRecords}">
+                <table>
+                    <tr>
+                        <th>Fruit Name</th>
+                        <th>Borrow Branch</th>
+                        <th>Lender Branch</th>
+                        <th>Quantity</th>
+                        <th>Borrow Date</th>
+                    </tr>
+                    <c:forEach var="record" items="${borrowRecords}">
+                        <tr>
+                            <td>${record.fruitName}</td>
+                            <td>${record.borrowBranch}</td>
+                            <td>${record.lenderBranch}</td>
+                            <td>${record.quantity}</td>
+                            <td>${record.borrowDate}</td>
+                        </tr>
+                    </c:forEach>
+                </table>
+            </c:if>
         </c:if>
 
-        <c:if test="${not empty reserveRecords}">
-            <table>
-                <tr>
-                    <th>Fruit Name</th>
-                    <th>Borrow Branch</th>
-                    <th>Lender Branch</th>
-                    <th>Quantity</th>
-                    <th>Borrow Date</th>
-                </tr>
-                <c:forEach var="record" items="${reserveRecords}">
+        <!-- 訂貨記錄 -->
+        <c:if test="${param.filter != 'borrow' || empty param.filter}">
+            <h3>Reserve Records</h3>
+            <c:if test="${empty reserveRecords}">
+                <p class="error">No reserve records found for this branch.</p>
+            </c:if>
+            <c:if test="${not empty reserveRecords}">
+                <table>
                     <tr>
-                        <td>${record.fruitName}</td>
-                        <td>${record.borrowBranch}</td>
-                        <td>${record.lenderBranch}</td>
-                        <td>${record.quantity}</td>
-                        <td>${record.borrowDate}</td>
+                        <th>Fruit Name</th>
+                        <th>Branch</th>
+                        <th>Source City</th>
+                        <th>Quantity</th>
+                        <th>Reserve Date</th>
                     </tr>
-                </c:forEach>
-            </table>
+                    <c:forEach var="record" items="${reserveRecords}">
+                        <tr>
+                            <td>${record.fruitName}</td>
+                            <td>${record.branch}</td>
+                            <td>${record.sourceCity}</td>
+                            <td>${record.quantity}</td>
+                            <td>${record.reserveDate}</td>
+                        </tr>
+                    </c:forEach>
+                </table>
+            </c:if>
         </c:if>
 
         <p style="text-align: center; margin-top: 15px;">
@@ -64,7 +105,7 @@
         </p>
     </div>
     <footer>
-        © 2025 Acer International Bakery. All rights reserved.
+        © 2025 Acer International Bakery.
     </footer>
 </body>
 </html>

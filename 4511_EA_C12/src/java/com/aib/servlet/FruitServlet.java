@@ -293,6 +293,79 @@ public class FruitServlet extends HttpServlet {
 
                 conn.commit();
                 request.setAttribute("success", "Borrowed " + quantity + " " + fruitName + " from branch " + lenderBranch + " to " + borrowBranch);
+            } else if ("reserveFruit".equals(page)) {
+                int fruitId = Integer.parseInt(request.getParameter("fruitId"));
+                int quantity = Integer.parseInt(request.getParameter("quantity"));
+                String employeeBranch = (String) session.getAttribute("employeeBranch");
+                String employeeCity = (String) session.getAttribute("employeeCity");
+                Integer employeeId = (Integer) session.getAttribute("employeeId");
+
+                if (employeeBranch == null || employeeCity == null || employeeId == null) {
+                    throw new SQLException("Employee branch, city, or ID not found. Please login as shopStaff.");
+                }
+
+                // Check available stock in fruits table
+                String checkSql = "SELECT stock_level, name, source_city, country FROM fruits WHERE id = ?";
+                int availableStock = 0;
+                String fruitName = null;
+                String sourceCity = null;
+                String country = null;
+                try (PreparedStatement stmt = conn.prepareStatement(checkSql)) {
+                    stmt.setInt(1, fruitId);
+                    ResultSet rs = stmt.executeQuery();
+                    if (rs.next()) {
+                        availableStock = rs.getInt("stock_level");
+                        fruitName = rs.getString("name");
+                        sourceCity = rs.getString("source_city");
+                        country = rs.getString("country");
+                    }
+                }
+
+                if (fruitName == null) {
+                    throw new SQLException("Fruit not found with ID " + fruitId);
+                }
+                if (quantity <= 0 || quantity > availableStock) {
+                    throw new SQLException("Invalid quantity or insufficient stock in Source City (" + sourceCity + ")");
+                }
+
+                // Update stock in fruits table
+                String updateFruitSql = "UPDATE fruits SET stock_level = stock_level - ? WHERE id = ?";
+                try (PreparedStatement stmt = conn.prepareStatement(updateFruitSql)) {
+                    stmt.setInt(1, quantity);
+                    stmt.setInt(2, fruitId);
+                    int rows = stmt.executeUpdate();
+                    if (rows == 0) {
+                        throw new SQLException("Failed to update fruits table");
+                    }
+                }
+
+                // Update or insert into branch_inventory
+                String upsertSql = "INSERT INTO branch_inventory (branch, fruit_name, stock_level, source_city, country) " +
+                                  "VALUES (?, ?, ?, ?, ?) " +
+                                  "ON DUPLICATE KEY UPDATE stock_level = stock_level + ?";
+                try (PreparedStatement stmt = conn.prepareStatement(upsertSql)) {
+                    stmt.setString(1, employeeBranch);
+                    stmt.setString(2, fruitName);
+                    stmt.setInt(3, quantity);
+                    stmt.setString(4, sourceCity);
+                    stmt.setString(5, country);
+                    stmt.setInt(6, quantity);
+                    stmt.executeUpdate();
+                }
+
+                // Insert into reserve_records
+                String insertReserveSql = "INSERT INTO reserve_records (branch, fruit_id, quantity, source_city, reserve_date) " +
+                                         "VALUES (?, ?, ?, ?, NOW())";
+                try (PreparedStatement stmt = conn.prepareStatement(insertReserveSql)) {
+                    stmt.setString(1, employeeBranch);
+                    stmt.setInt(2, fruitId);
+                    stmt.setInt(3, quantity);
+                    stmt.setString(4, sourceCity);
+                    stmt.executeUpdate();
+                }
+
+                conn.commit();
+                request.setAttribute("success", "Reserved " + quantity + " " + fruitName + " from Source City " + sourceCity + " to branch " + employeeBranch);
             }
 
             doGet(request, response);

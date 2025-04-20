@@ -25,13 +25,15 @@ public class CheckReserveServlet extends HttpServlet {
         private String lenderBranch;
         private int quantity;
         private String borrowDate;
+        private String status; // 新增 status 欄位
 
-        public BorrowRecord(String fruitName, String borrowBranch, String lenderBranch, int quantity, String borrowDate) {
+        public BorrowRecord(String fruitName, String borrowBranch, String lenderBranch, int quantity, String borrowDate, String status) {
             this.fruitName = fruitName;
             this.borrowBranch = borrowBranch;
             this.lenderBranch = lenderBranch;
             this.quantity = quantity;
             this.borrowDate = borrowDate;
+            this.status = status;
         }
 
         public String getFruitName() { return fruitName; }
@@ -48,6 +50,9 @@ public class CheckReserveServlet extends HttpServlet {
 
         public String getBorrowDate() { return borrowDate; }
         public void setBorrowDate(String borrowDate) { this.borrowDate = borrowDate; }
+
+        public String getStatus() { return status; } // 新增 getter
+        public void setStatus(String status) { this.status = status; } // 新增 setter
     }
 
     // 訂貨記錄類
@@ -57,13 +62,15 @@ public class CheckReserveServlet extends HttpServlet {
         private String sourceCity;
         private int quantity;
         private String reserveDate;
+        private String status; // 新增 status 欄位
 
-        public ReserveRecord(String fruitName, String branch, String sourceCity, int quantity, String reserveDate) {
+        public ReserveRecord(String fruitName, String branch, String sourceCity, int quantity, String reserveDate, String status) {
             this.fruitName = fruitName;
             this.branch = branch;
             this.sourceCity = sourceCity;
             this.quantity = quantity;
             this.reserveDate = reserveDate;
+            this.status = status;
         }
 
         public String getFruitName() { return fruitName; }
@@ -80,6 +87,9 @@ public class CheckReserveServlet extends HttpServlet {
 
         public String getReserveDate() { return reserveDate; }
         public void setReserveDate(String reserveDate) { this.reserveDate = reserveDate; }
+
+        public String getStatus() { return status; } // 新增 getter
+        public void setStatus(String status) { this.status = status; } // 新增 setter
     }
 
     @Override
@@ -109,7 +119,7 @@ public class CheckReserveServlet extends HttpServlet {
             // 查詢借貨記錄
             List<BorrowRecord> borrowRecords = new ArrayList<>();
             if (!filter.equals("reserve")) {
-                String borrowSql = "SELECT f.name AS fruit_name, br.borrow_branch, br.lender_branch, br.quantity, br.borrow_date " +
+                String borrowSql = "SELECT f.name AS fruit_name, br.borrow_branch, br.lender_branch, br.quantity, br.borrow_date, br.status " +
                                   "FROM borrow_records br " +
                                   "JOIN fruits f ON br.fruit_id = f.id " +
                                   "WHERE br.borrow_branch = ? OR br.lender_branch = ?";
@@ -123,7 +133,8 @@ public class CheckReserveServlet extends HttpServlet {
                             rs.getString("borrow_branch"),
                             rs.getString("lender_branch"),
                             rs.getInt("quantity"),
-                            rs.getString("borrow_date")
+                            rs.getString("borrow_date"),
+                            rs.getString("status") // 新增 status
                         ));
                     }
                     System.out.println("Borrow Records found: " + borrowRecords.size());
@@ -134,7 +145,7 @@ public class CheckReserveServlet extends HttpServlet {
             // 查詢訂貨記錄
             List<ReserveRecord> reserveRecords = new ArrayList<>();
             if (!filter.equals("borrow")) {
-                String reserveSql = "SELECT f.name AS fruit_name, rr.branch, rr.source_city, rr.quantity, rr.reserve_date " +
+                String reserveSql = "SELECT f.name AS fruit_name, rr.branch, rr.source_city, rr.quantity, rr.reserve_date, rr.status " +
                                    "FROM reserve_records rr " +
                                    "JOIN fruits f ON rr.fruit_id = f.id " +
                                    "WHERE rr.branch = ?";
@@ -147,7 +158,8 @@ public class CheckReserveServlet extends HttpServlet {
                             rs.getString("branch"),
                             rs.getString("source_city"),
                             rs.getInt("quantity"),
-                            rs.getString("reserve_date")
+                            rs.getString("reserve_date"),
+                            rs.getString("status") // 新增 status
                         ));
                     }
                     System.out.println("Reserve Records found: " + reserveRecords.size());

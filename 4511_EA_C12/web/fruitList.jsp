@@ -18,6 +18,8 @@
                 <li><a href="FruitServlet">Reserve Fruit</a></li>
                 <li><a href="FruitServlet?page=borrowFruit">Borrow Fruit</a></li>
                 <li><a href="CheckReserveServlet">Check Reservations</a></li>
+                <li><a href="FruitManagementServlet">Manage Fruits</a></li>
+                <li><a href="ApproveServlet">Approve Requests</a></li>
                 <li><a href="LogoutServlet">Logout</a></li>
             </ul>
         </nav>

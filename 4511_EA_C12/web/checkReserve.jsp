@@ -7,6 +7,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Check Reserve Records - AIB Web System</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        .back-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-top: 15px;
+            cursor: pointer;
+        }
+        .back-button:hover {
+            background-color: #45a049;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -18,6 +34,8 @@
                 <li><a href="FruitServlet">Reserve Fruit</a></li>
                 <li><a href="FruitServlet?page=borrowFruit">Borrow Fruit</a></li>
                 <li><a href="CheckReserveServlet">Check Reservations</a></li>
+                <li><a href="FruitManagementServlet">Manage Fruits</a></li>
+                <li><a href="ApproveServlet">Approve Requests</a></li>
                 <li><a href="LogoutServlet">Logout</a></li>
             </ul>
         </nav>
@@ -32,7 +50,7 @@
             <p class="success">${success}</p>
         </c:if>
 
-        <!-- 篩選表單 -->
+
         <form action="CheckReserveServlet" method="get" class="filter-form">
             <label for="filter">Filter Records:</label>
             <select name="filter" id="filter" onchange="this.form.submit()">
@@ -58,6 +76,7 @@
                         <th>Lender Branch</th>
                         <th>Quantity</th>
                         <th>Borrow Date</th>
+                        <th>Status</th>
                     </tr>
                     <c:forEach var="record" items="${borrowRecords}">
                         <tr>
@@ -66,6 +85,7 @@
                             <td>${record.lenderBranch}</td>
                             <td>${record.quantity}</td>
                             <td>${record.borrowDate}</td>
+                            <td>${record.status}</td>
                         </tr>
                     </c:forEach>
                 </table>
@@ -86,6 +106,7 @@
                         <th>Source City</th>
                         <th>Quantity</th>
                         <th>Reserve Date</th>
+                        <th>Status</th>
                     </tr>
                     <c:forEach var="record" items="${reserveRecords}">
                         <tr>
@@ -94,15 +115,17 @@
                             <td>${record.sourceCity}</td>
                             <td>${record.quantity}</td>
                             <td>${record.reserveDate}</td>
+                            <td>${record.status}</td>
                         </tr>
                     </c:forEach>
                 </table>
             </c:if>
         </c:if>
 
-        <p style="text-align: center; margin-top: 15px;">
-            <a href="staffHome.jsp">Back to Home</a>
-        </p>
+
+        <div style="text-align: center;">
+            <a href="staffHome.jsp" class="back-button">Back to Home</a>
+        </div>
     </div>
     <footer>
         © 2025 Acer International Bakery.

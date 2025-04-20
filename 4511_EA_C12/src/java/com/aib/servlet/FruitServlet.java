@@ -268,21 +268,9 @@ public class FruitServlet extends HttpServlet {
                     throw new SQLException("Invalid quantity or insufficient stock in branch " + lenderBranch);
                 }
 
-                String updateSql = "UPDATE branch_inventory SET stock_level = stock_level - ? " +
-                        "WHERE fruit_name = ? AND source_city = ? AND branch = ?";
-                try (PreparedStatement stmt = conn.prepareStatement(updateSql)) {
-                    stmt.setInt(1, quantity);
-                    stmt.setString(2, fruitName);
-                    stmt.setString(3, sourceCity);
-                    stmt.setString(4, lenderBranch);
-                    int rows = stmt.executeUpdate();
-                    if (rows == 0) {
-                        throw new SQLException("Failed to update branch inventory");
-                    }
-                }
-
-                String insertSql = "INSERT INTO borrow_records (borrow_branch, lender_branch, fruit_id, quantity, borrow_date) " +
-                        "VALUES (?, ?, ?, ?, NOW())";
+                // 不再直接更新庫存，等待審批通過後再更新
+                String insertSql = "INSERT INTO borrow_records (borrow_branch, lender_branch, fruit_id, quantity, borrow_date, status) " +
+                        "VALUES (?, ?, ?, ?, NOW(), 'PENDING')";
                 try (PreparedStatement stmt = conn.prepareStatement(insertSql)) {
                     stmt.setString(1, borrowBranch);
                     stmt.setString(2, lenderBranch);
@@ -292,7 +280,7 @@ public class FruitServlet extends HttpServlet {
                 }
 
                 conn.commit();
-                request.setAttribute("success", "Borrowed " + quantity + " " + fruitName + " from branch " + lenderBranch + " to " + borrowBranch);
+                request.setAttribute("success", "Borrow request for " + quantity + " " + fruitName + " from branch " + lenderBranch + " to " + borrowBranch + " submitted. Awaiting approval.");
             } else if ("reserveFruit".equals(page)) {
                 int fruitId = Integer.parseInt(request.getParameter("fruitId"));
                 int quantity = Integer.parseInt(request.getParameter("quantity"));
@@ -304,7 +292,6 @@ public class FruitServlet extends HttpServlet {
                     throw new SQLException("Employee branch, city, or ID not found. Please login as shopStaff.");
                 }
 
-                // Check available stock in fruits table
                 String checkSql = "SELECT stock_level, name, source_city, country FROM fruits WHERE id = ?";
                 int availableStock = 0;
                 String fruitName = null;
@@ -328,34 +315,9 @@ public class FruitServlet extends HttpServlet {
                     throw new SQLException("Invalid quantity or insufficient stock in Source City (" + sourceCity + ")");
                 }
 
-                // Update stock in fruits table
-                String updateFruitSql = "UPDATE fruits SET stock_level = stock_level - ? WHERE id = ?";
-                try (PreparedStatement stmt = conn.prepareStatement(updateFruitSql)) {
-                    stmt.setInt(1, quantity);
-                    stmt.setInt(2, fruitId);
-                    int rows = stmt.executeUpdate();
-                    if (rows == 0) {
-                        throw new SQLException("Failed to update fruits table");
-                    }
-                }
-
-                // Update or insert into branch_inventory
-                String upsertSql = "INSERT INTO branch_inventory (branch, fruit_name, stock_level, source_city, country) " +
-                                  "VALUES (?, ?, ?, ?, ?) " +
-                                  "ON DUPLICATE KEY UPDATE stock_level = stock_level + ?";
-                try (PreparedStatement stmt = conn.prepareStatement(upsertSql)) {
-                    stmt.setString(1, employeeBranch);
-                    stmt.setString(2, fruitName);
-                    stmt.setInt(3, quantity);
-                    stmt.setString(4, sourceCity);
-                    stmt.setString(5, country);
-                    stmt.setInt(6, quantity);
-                    stmt.executeUpdate();
-                }
-
-                // Insert into reserve_records
-                String insertReserveSql = "INSERT INTO reserve_records (branch, fruit_id, quantity, source_city, reserve_date) " +
-                                         "VALUES (?, ?, ?, ?, NOW())";
+                // 不再直接更新庫存，等待審批通過後再更新
+                String insertReserveSql = "INSERT INTO reserve_records (branch, fruit_id, quantity, source_city, reserve_date, status) " +
+                                         "VALUES (?, ?, ?, ?, NOW(), 'PENDING')";
                 try (PreparedStatement stmt = conn.prepareStatement(insertReserveSql)) {
                     stmt.setString(1, employeeBranch);
                     stmt.setInt(2, fruitId);
@@ -365,7 +327,7 @@ public class FruitServlet extends HttpServlet {
                 }
 
                 conn.commit();
-                request.setAttribute("success", "Reserved " + quantity + " " + fruitName + " from Source City " + sourceCity + " to branch " + employeeBranch);
+                request.setAttribute("success", "Reserve request for " + quantity + " " + fruitName + " from Source City " + sourceCity + " to branch " + employeeBranch + " submitted. Awaiting approval.");
             }
 
             doGet(request, response);

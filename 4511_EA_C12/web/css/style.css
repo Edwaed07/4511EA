@@ -77,6 +77,12 @@ h2 {
     font-weight: 600;
 }
 
+h3 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    color: #333;
+}
+
 /* Paragraphs */
 p {
     font-size: 16px;
@@ -287,8 +293,8 @@ table th, table td {
 }
 
 table th {
-    background-color: #2d3748;
-    color: #edf2f7;
+    background-color: #ffffff; /* 白色背景 */
+    color: #000000; /* 黑色文字 */
     font-weight: 600;
 }
 
@@ -296,13 +302,15 @@ table tr:hover {
     background-color: #f7fafc;
 }
 
-/* 表格欄位寬度 */
-table th:nth-child(1), table td:nth-child(1) { width: 15%; } /* Name */
-table th:nth-child(2), table td:nth-child(2) { width: 20%; } /* Source City */
-table th:nth-child(3), table td:nth-child(3) { width: 15%; } /* Country */
-table th:nth-child(4), table td:nth-child(4) { width: 15%; } /* Branch */
-table th:nth-child(5), table td:nth-child(5) { width: 10%; } /* Stock */
-table th:nth-child(6), table td:nth-child(6) { width: 25%; } /* Action */
+/* 調整表格欄位寬度以適應 checkReserve.jsp */
+table th:nth-child(1), table td:nth-child(1) { width: 5%; }  /* ID */
+table th:nth-child(2), table td:nth-child(2) { width: 15%; } /* From Branch */
+table th:nth-child(3), table td:nth-child(3) { width: 15%; } /* To Branch */
+table th:nth-child(4), table td:nth-child(4) { width: 15%; } /* Fruit Name */
+table th:nth-child(5), table td:nth-child(5) { width: 15%; } /* Source City */
+table th:nth-child(6), table td:nth-child(6) { width: 10%; } /* Quantity */
+table th:nth-child(7), table td:nth-child(7) { width: 15%; } /* Borrow Date */
+table th:nth-child(8), table td:nth-child(8) { width: 10%; } /* Status */
 
 /* Messages */
 .error {
@@ -429,26 +437,4 @@ footer {
 .filter-form select {
     padding: 5px;
     font-size: 16px;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-}
-
-table th, table td {
-    padding: 10px;
-    border: 1px solid #ddd;
-    text-align: left;
-}
-
-table th {
-    background-color: #f2f2f2;
-}
-
-h3 {
-    margin-top: 20px;
-    margin-bottom: 10px;
-    color: #333;
 }

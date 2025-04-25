@@ -1,5 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@page import="com.aib.model.Fruit"%>
+<%@page import="java.util.List"%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -37,6 +39,8 @@
         <c:if test="${not empty success}">
             <p class="success">${success}</p>
         </c:if>
+
+        <!-- 使用 JSP Action 顯示水果列表 -->
         <table>
             <tr>
                 <th>ID</th>
@@ -45,25 +49,41 @@
                 <th>Stock (box)</th>
                 <th>Action</th>
             </tr>
-            <c:forEach var="fruit" items="${fruits}">
+            <%
+                List<Fruit> fruits = (List<Fruit>) request.getAttribute("fruits");
+                if (fruits != null && !fruits.isEmpty()) {
+                    for (int i = 0; i < fruits.size(); i++) {
+                        pageContext.setAttribute("fruit", fruits.get(i));
+            %>
+                <jsp:useBean id="fruit" type="com.aib.model.Fruit" scope="page"/>
                 <tr>
-                    <td>${fruit.id}</td>
-                    <td>${fruit.name}</td>
-                    <td>${fruit.sourceCity}</td>
-                    <td>${fruit.stockLevel}</td>
+                    <td><jsp:getProperty name="fruit" property="id"/></td>
+                    <td><jsp:getProperty name="fruit" property="name"/></td>
+                    <td><jsp:getProperty name="fruit" property="sourceCity"/></td>
+                    <td><jsp:getProperty name="fruit" property="stockLevel"/></td>
                     <td>
                         <form action="FruitServlet" method="post" class="action-form">
                             <input type="hidden" name="page" value="reserveFruit">
-                            <input type="hidden" name="fruitId" value="${fruit.id}">
+                            <input type="hidden" name="fruitId" value="<%= ((Fruit) pageContext.getAttribute("fruit")).getId() %>">
                             <div class="stock-group">
-                                <input type="number" name="quantity" min="1" max="${fruit.stockLevel}" required>
+                                <input type="number" name="quantity" min="1" max="<%= ((Fruit) pageContext.getAttribute("fruit")).getStockLevel() %>" required>
                                 <input type="submit" value="Reserve">
                             </div>
                         </form>
                     </td>
                 </tr>
-            </c:forEach>
+            <%
+                    }
+                } else {
+            %>
+                <tr>
+                    <td colspan="5" class="error">No fruits found.</td>
+                </tr>
+            <%
+                }
+            %>
         </table>
+
         <p style="text-align: center; margin-top: 15px;">
             <a href="staffHome.jsp">Back to Home</a>
         </p>

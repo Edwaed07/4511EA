@@ -1,5 +1,12 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%
+    // 如果fruits属性为空，重定向到Servlet以加载数据
+    if(request.getAttribute("fruits") == null) {
+        response.sendRedirect("WarehouseServlet?action=loadCheckIn");
+        return;
+    }
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,7 +22,7 @@
             <ul>
                 <li><a href="warehouseHome.jsp">Home</a></li>
                 <li><a href="FruitServlet?page=fruitList">Fruits List</a></li>
-                <li><a href="warehouseCheckIn.jsp">Check-In Stock</a></li>
+                <li><a href="WarehouseServlet?action=loadCheckIn">Check-In Stock</a></li>
                 <li><a href="WarehouseServlet?action=viewTotalNeeds">Total Needs by Country</a></li>
                 <li><a href="WarehouseServlet?action=viewDeliveries">Manage Deliveries</a></li>
                 <li><a href="LogoutServlet">Logout</a></li>

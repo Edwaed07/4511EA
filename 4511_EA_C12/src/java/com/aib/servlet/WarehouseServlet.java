@@ -62,6 +62,10 @@ public class WarehouseServlet extends HttpServlet {
                 case "arrangeDelivery":
                     arrangeDelivery(request, response, conn);
                     break;
+                
+                case "loadCheckIn":
+                    loadCheckInPage(request, response, conn);
+                    break;
                     
                 default:
                     showWarehouseHome(request, response, conn);
@@ -349,7 +353,7 @@ public class WarehouseServlet extends HttpServlet {
         String quantityStr = request.getParameter("quantity");
         String warehouseLocation = request.getParameter("warehouseLocation");
         
-        // 验证输入
+        // 驗證輸入
         if (fruitIdStr == null || fruitIdStr.isEmpty() || 
             quantityStr == null || quantityStr.isEmpty() || 
             warehouseLocation == null || warehouseLocation.isEmpty()) {
@@ -363,7 +367,7 @@ public class WarehouseServlet extends HttpServlet {
         int fruitId = Integer.parseInt(fruitIdStr);
         int quantity = Integer.parseInt(quantityStr);
         
-        // 更新仓库库存
+        // 更新倉庫庫存
         String updateSql = "UPDATE warehouse_inventory SET stock_level = stock_level + ? " +
                           "WHERE fruit_id = ? AND warehouse_type = ?";
         
@@ -375,7 +379,7 @@ public class WarehouseServlet extends HttpServlet {
             int rowsAffected = stmt.executeUpdate();
             
             if (rowsAffected == 0) {
-                // 如果没有记录被更新，则插入新记录
+                // 如果沒有記錄被更新，則插入新記錄
                 String insertSql = "INSERT INTO warehouse_inventory (fruit_id, warehouse_type, stock_level) " +
                                  "VALUES (?, ?, ?)";
                 
@@ -387,26 +391,37 @@ public class WarehouseServlet extends HttpServlet {
                 }
             }
             
-            // 记录库存变动日志
-            String logSql = "INSERT INTO stock_movement_log (fruit_id, warehouse_type, quantity, movement_type, user_id, movement_date) " +
-                          "VALUES (?, ?, ?, 'Check-In', ?, CURRENT_TIMESTAMP)";
-            
-            HttpSession session = request.getSession();
-            
-            try (PreparedStatement logStmt = conn.prepareStatement(logSql)) {
-                logStmt.setInt(1, fruitId);
-                logStmt.setString(2, warehouseLocation);
-                logStmt.setInt(3, quantity);
-                logStmt.setInt(4, (Integer) session.getAttribute("employeeId"));
-                logStmt.executeUpdate();
+            // 記錄庫存變動日誌（添加錯誤處理）
+            try {
+                String logSql = "INSERT INTO stock_movement_log (fruit_id, warehouse_type, quantity, movement_type, user_id, movement_date) " +
+                              "VALUES (?, ?, ?, 'Check-In', ?, CURRENT_TIMESTAMP)";
+                
+                HttpSession session = request.getSession();
+                
+                try (PreparedStatement logStmt = conn.prepareStatement(logSql)) {
+                    logStmt.setInt(1, fruitId);
+                    logStmt.setString(2, warehouseLocation);
+                    logStmt.setInt(3, quantity);
+                    logStmt.setInt(4, (Integer) session.getAttribute("employeeId"));
+                    logStmt.executeUpdate();
+                }
+            } catch (SQLException e) {
+                // 只記錄錯誤，但不中斷處理流程
+                // 表格可能不存在，但主要功能（庫存更新）已經完成
+                System.err.println("無法記錄庫存變動日誌: " + e.getMessage());
+                // 庫存已更新成功，所以仍然顯示成功信息，但添加提示
+                request.setAttribute("message", "Stock checked in successfully (movement log not created)");
+                request.setAttribute("messageType", "warning");
+                loadCheckInPage(request, response, conn);
+                return;
             }
             
-            // 设置成功消息
+            // 設置成功消息
             request.setAttribute("message", "Stock checked in successfully");
             request.setAttribute("messageType", "success");
         }
         
-        // 重新加载入库页面
+        // 重新加載入庫頁面
         loadCheckInPage(request, response, conn);
     }
     

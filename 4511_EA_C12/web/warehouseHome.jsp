@@ -15,7 +15,7 @@
             <ul>
                 <li><a href="warehouseHome.jsp">Home</a></li>
                 <li><a href="FruitServlet?page=fruitList">Fruits List</a></li>
-                <li><a href="warehouseCheckIn.jsp">Check-In Stock</a></li>
+                <li><a href="WarehouseServlet?action=loadCheckIn">Check-In Stock</a></li>
                 <li><a href="WarehouseServlet?action=viewTotalNeeds">Total Needs by Country</a></li>
                 <li><a href="WarehouseServlet?action=viewDeliveries">Manage Deliveries</a></li>
                 <li><a href="LogoutServlet">Logout</a></li>

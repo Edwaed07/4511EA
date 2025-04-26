@@ -15,7 +15,7 @@
             <ul>
                 <li><a href="warehouseHome.jsp">Home</a></li>
                 <li><a href="FruitServlet?page=fruitList">Fruits List</a></li>
-                <li><a href="warehouseCheckIn.jsp">Check-In Stock</a></li>
+                <li><a href="WarehouseServlet?action=loadCheckIn">Check-In Stock</a></li>
                 <li><a href="WarehouseServlet?action=viewTotalNeeds">Total Needs by Country</a></li>
                 <li><a href="WarehouseServlet?action=viewDeliveries">Manage Deliveries</a></li>
                 <li><a href="LogoutServlet">Logout</a></li>
@@ -28,11 +28,78 @@
         </c:if>
         
         <div class="tab-navigation">
-            <a href="#" class="tab-link active" data-tab="pending">Pending Deliveries</a>
-            <a href="#" class="tab-link" data-tab="in-transit">In Transit</a>
-            <a href="#" class="tab-link" data-tab="completed">Completed</a>
-            <a href="#" class="tab-link" data-tab="new-delivery">Arrange New Delivery</a>
+            <ul class="nav-tabs">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active" data-tab="pending">Pending Deliveries</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-tab="in-transit">In Transit</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-tab="completed">Completed</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-tab="new-delivery">Arrange New Delivery</a>
+                </li>
+            </ul>
         </div>
+        
+        <style>
+            /* 添加自定義導航樣式 */
+            .nav-tabs {
+                display: flex;
+                list-style: none;
+                padding: 0;
+                margin: 0;
+                border-bottom: 1px solid #ddd;
+            }
+            .nav-item {
+                margin: 0;
+                padding: 0;
+            }
+            .nav-link {
+                display: block;
+                padding: 10px 15px;
+                text-decoration: none;
+                color: #555;
+                background-color: #f8f8f8;
+                border: 1px solid transparent;
+                border-radius: 4px 4px 0 0;
+                margin-right: 2px;
+            }
+            .nav-link.active {
+                color: #333;
+                background-color: #fff;
+                border-color: #ddd #ddd #fff;
+            }
+            /* 移除可能出現的文本樣式 */
+            .tab-navigation {
+                display: block;
+                width: 100%;
+            }
+            /* 隱藏非活動內容 */
+            .tab-content {
+                display: none;
+            }
+            .tab-content.active {
+                display: block;
+            }
+        </style>
+        
+        <!-- 初始化設置：隱藏除第一個標籤外的所有內容 -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // 隱藏除第一個標籤外的所有內容
+                const tabContents = document.querySelectorAll('.tab-content');
+                tabContents.forEach((content, index) => {
+                    if (index === 0) {
+                        content.classList.add('active');
+                    } else {
+                        content.classList.remove('active');
+                    }
+                });
+            });
+        </script>
         
         <div id="pending" class="tab-content active">
             <h2>Pending Deliveries</h2>
@@ -197,7 +264,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Tab navigation
-            const tabLinks = document.querySelectorAll('.tab-link');
+            const tabLinks = document.querySelectorAll('.nav-link');
             const tabContents = document.querySelectorAll('.tab-content');
             
             tabLinks.forEach(link => {

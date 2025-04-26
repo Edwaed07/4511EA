@@ -25,7 +25,7 @@
                 <li><a href="LogoutServlet">Logout</a></li>
             </ul>
         </nav>
-        <h1>Fruit List</h1>
+        <h1>Country Of Origin Fruit</h1>
 
         <!-- 顯示資料庫連接狀態 -->
         <p class="success"><strong>Database Connection Status:</strong> ${connectionStatus}</p>

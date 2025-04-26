@@ -1,4 +1,4 @@
-package your;
+package seniorManager;
 
 public class ConsumptionReport {
     private String shopName;

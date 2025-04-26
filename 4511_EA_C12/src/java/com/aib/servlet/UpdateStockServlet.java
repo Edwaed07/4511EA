@@ -42,10 +42,10 @@ public class UpdateStockServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         String employeeBranch = (String) session.getAttribute("employeeBranch");
+        Integer employeeId = (Integer) session.getAttribute("employeeId");
 
-        if (employeeBranch == null) {
-            request.setAttribute("error", "Please login as shop staff to view stock.");
-            request.getRequestDispatcher("updateStock.jsp").forward(request, response);
+        if (employeeBranch == null || employeeId == null) {
+            response.sendRedirect("login.jsp?role=shopStaff");
             return;
         }
 

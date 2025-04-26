@@ -1,7 +1,11 @@
 package com.aib.servlet;
 
-import com.aib.model.Fruit;
-import com.aib.util.DatabaseConnection;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,12 +15,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import com.aib.bean.Fruit;
+import com.aib.util.DatabaseConnection;
 
 @WebServlet(name = "FruitServlet", urlPatterns = {"/FruitServlet"})
 public class FruitServlet extends HttpServlet {
@@ -24,11 +24,6 @@ public class FruitServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String page = request.getParameter("page");
-        if (page == null || page.isEmpty()) {
-            page = "fruitList";
-        }
-
         HttpSession session = request.getSession();
         Connection conn = null;
         try {
@@ -36,32 +31,94 @@ public class FruitServlet extends HttpServlet {
             session.setAttribute("connectionStatus", "Connected to database successfully");
             System.out.println("Connected to database: " + conn.getCatalog());
 
-            Integer employeeId = (Integer) session.getAttribute("employeeId");
-            String employeeBranch = null;
-            String employeeCity = null;
-            if (employeeId != null) {
-                try (PreparedStatement stmt = conn.prepareStatement(
-                        "SELECT e.branch, s.source_city FROM employees e JOIN shops s ON e.branch = s.branch WHERE e.id = ?")) {
-                    stmt.setInt(1, employeeId);
-                    ResultSet rs = stmt.executeQuery();
-                    if (rs.next()) {
-                        employeeBranch = rs.getString("branch");
-                        employeeCity = rs.getString("source_city");
-                    }
-                }
-                session.setAttribute("employeeBranch", employeeBranch);
-                session.setAttribute("employeeCity", employeeCity);
-            }
+            String page = request.getParameter("page");
+            if (page == null || page.isEmpty() || "fruitList".equals(page)) {
+                String country = request.getParameter("country");
+                String sourceCity = request.getParameter("sourceCity");
+                String[] branches = request.getParameterValues("branches");
+                String minStock = request.getParameter("minStock");
+                String maxStock = request.getParameter("maxStock");
 
-            if (page.equals("borrowFruit")) {
+                List<Fruit> fruits = new ArrayList<>();
+                String sql = "SELECT DISTINCT f.fruit_id, f.fruit_name, f.source_location, f.country, " +
+                        "COALESCE(bi.stock_level, 0) as stock_level " +
+                        "FROM fruits f " +
+                        "LEFT JOIN branch_inventory bi ON f.fruit_name = bi.fruit_name AND f.source_location = bi.source_city " +
+                        "WHERE 1=1";
+
+                if (country != null && !country.isEmpty()) {
+                    sql += " AND f.country = ?";
+                }
+                if (sourceCity != null && !sourceCity.isEmpty()) {
+                    sql += " AND f.source_location = ?";
+                }
+                if (branches != null && branches.length > 0) {
+                    sql += " AND bi.branch IN (";
+                    for (int i = 0; i < branches.length; i++) {
+                        sql += "?";
+                        if (i < branches.length - 1) sql += ",";
+                    }
+                    sql += ")";
+                }
+                if (minStock != null && !minStock.isEmpty()) {
+                    sql += " AND COALESCE(bi.stock_level, 0) >= ?";
+                }
+                if (maxStock != null && !maxStock.isEmpty()) {
+                    sql += " AND COALESCE(bi.stock_level, 0) <= ?";
+                }
+
+                try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                    int paramIndex = 1;
+                    if (country != null && !country.isEmpty()) {
+                        stmt.setString(paramIndex++, country);
+                    }
+                    if (sourceCity != null && !sourceCity.isEmpty()) {
+                        stmt.setString(paramIndex++, sourceCity);
+                    }
+                    if (branches != null && branches.length > 0) {
+                        for (String branch : branches) {
+                            stmt.setString(paramIndex++, branch);
+                        }
+                    }
+                    if (minStock != null && !minStock.isEmpty()) {
+                        stmt.setInt(paramIndex++, Integer.parseInt(minStock));
+                    }
+                    if (maxStock != null && !maxStock.isEmpty()) {
+                        stmt.setInt(paramIndex++, Integer.parseInt(maxStock));
+                    }
+
+                    ResultSet rs = stmt.executeQuery();
+                    Map<String, Fruit> fruitMap = new HashMap<>();
+                    while (rs.next()) {
+                        String key = rs.getString("fruit_name") + ":" + rs.getString("source_location");
+                        Fruit fruit = fruitMap.get(key);
+                        if (fruit == null) {
+                            fruit = new Fruit(
+                                rs.getInt("fruit_id"),
+                                rs.getString("fruit_name"),
+                                rs.getString("source_location"),
+                                rs.getString("country"),
+                                rs.getInt("stock_level")
+                            );
+                            fruitMap.put(key, fruit);
+                        }
+                    }
+                    fruits.addAll(fruitMap.values());
+                }
+                request.setAttribute("fruits", fruits);
+                request.getRequestDispatcher("fruitList.jsp").forward(request, response);
+            } else if (page.equals("borrowFruit")) {
                 String country = request.getParameter("country");
                 String sourceCity = request.getParameter("sourceCity");
                 String[] branches = request.getParameterValues("branch");
                 String minStock = request.getParameter("minStock");
                 String maxStock = request.getParameter("maxStock");
+                
+                // 获取当前员工所在分支
+                String employeeBranch = (String) session.getAttribute("employeeBranch");
 
                 List<String> countries = new ArrayList<>();
-                try (PreparedStatement stmt = conn.prepareStatement("SELECT DISTINCT f.country FROM fruits f JOIN branch_inventory bi ON f.name = bi.fruit_name ORDER BY f.country")) {
+                try (PreparedStatement stmt = conn.prepareStatement("SELECT DISTINCT f.country FROM fruits f JOIN branch_inventory bi ON f.fruit_name = bi.fruit_name ORDER BY f.country")) {
                     ResultSet rs = stmt.executeQuery();
                     while (rs.next()) {
                         countries.add(rs.getString("country"));
@@ -85,53 +142,64 @@ public class FruitServlet extends HttpServlet {
                 }
 
                 List<Fruit> fruits = new ArrayList<>();
-                StringBuilder sql = new StringBuilder(
-                        "SELECT bi.fruit_name, bi.source_city, f.country, bi.branch, bi.stock_level, f.id " +
-                        "FROM branch_inventory bi JOIN fruits f ON bi.fruit_name = f.name AND bi.source_city = f.source_city WHERE 1=1");
-                List<Object> params = new ArrayList<>();
+                String sql = "SELECT DISTINCT f.fruit_id, f.fruit_name, f.source_location, f.country, " +
+                        "bi.stock_level, bi.branch " +
+                        "FROM fruits f " +
+                        "JOIN branch_inventory bi ON f.fruit_name = bi.fruit_name AND f.source_location = bi.source_city " +
+                        "WHERE 1=1";
 
                 if (country != null && !country.isEmpty()) {
-                    sql.append(" AND f.country = ?");
-                    params.add(country);
+                    sql += " AND f.country = ?";
                 }
                 if (sourceCity != null && !sourceCity.isEmpty()) {
-                    sql.append(" AND bi.source_city = ?");
-                    params.add(sourceCity);
+                    sql += " AND f.source_location = ?";
                 }
                 if (branches != null && branches.length > 0) {
-                    sql.append(" AND bi.branch IN (");
+                    sql += " AND bi.branch IN (";
                     for (int i = 0; i < branches.length; i++) {
-                        sql.append("?");
-                        if (i < branches.length - 1) sql.append(",");
-                        params.add(branches[i]);
+                        sql += "?";
+                        if (i < branches.length - 1) sql += ",";
                     }
-                    sql.append(")");
+                    sql += ")";
                 }
                 if (minStock != null && !minStock.isEmpty()) {
-                    sql.append(" AND bi.stock_level >= ?");
-                    params.add(Integer.parseInt(minStock));
+                    sql += " AND bi.stock_level >= ?";
                 }
                 if (maxStock != null && !maxStock.isEmpty()) {
-                    sql.append(" AND bi.stock_level <= ?");
-                    params.add(Integer.parseInt(maxStock));
+                    sql += " AND bi.stock_level <= ?";
                 }
 
-                try (PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
-                    for (int i = 0; i < params.size(); i++) {
-                        stmt.setObject(i + 1, params.get(i));
+                try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                    int paramIndex = 1;
+                    if (country != null && !country.isEmpty()) {
+                        stmt.setString(paramIndex++, country);
+                    }
+                    if (sourceCity != null && !sourceCity.isEmpty()) {
+                        stmt.setString(paramIndex++, sourceCity);
+                    }
+                    if (branches != null && branches.length > 0) {
+                        for (String branch : branches) {
+                            stmt.setString(paramIndex++, branch);
+                        }
+                    }
+                    if (minStock != null && !minStock.isEmpty()) {
+                        stmt.setInt(paramIndex++, Integer.parseInt(minStock));
+                    }
+                    if (maxStock != null && !maxStock.isEmpty()) {
+                        stmt.setInt(paramIndex++, Integer.parseInt(maxStock));
                     }
                     ResultSet rs = stmt.executeQuery();
                     Map<String, Fruit> fruitMap = new HashMap<>();
                     while (rs.next()) {
-                        String key = rs.getString("fruit_name") + ":" + rs.getString("source_city");
+                        String key = rs.getString("fruit_name") + ":" + rs.getString("source_location");
                         Fruit fruit = fruitMap.get(key);
                         if (fruit == null) {
                             fruit = new Fruit(
-                                    rs.getInt("id"),
+                                    rs.getInt("fruit_id"),
                                     rs.getString("fruit_name"),
-                                    rs.getString("source_city"),
+                                    rs.getString("source_location"),
                                     rs.getString("country"),
-                                    0
+                                    rs.getInt("stock_level")
                             );
                             fruitMap.put(key, fruit);
                             fruits.add(fruit);
@@ -167,23 +235,6 @@ public class FruitServlet extends HttpServlet {
                 request.setAttribute("minStock", minStock);
                 request.setAttribute("maxStock", maxStock);
                 request.getRequestDispatcher("borrowFruit.jsp").forward(request, response);
-            } else {
-                List<Fruit> fruits = new ArrayList<>();
-                try (PreparedStatement stmt = conn.prepareStatement(
-                        "SELECT id, name, source_city, country, stock_level FROM fruits")) {
-                    ResultSet rs = stmt.executeQuery();
-                    while (rs.next()) {
-                        fruits.add(new Fruit(
-                                rs.getInt("id"),
-                                rs.getString("name"),
-                                rs.getString("source_city"),
-                                rs.getString("country"),
-                                rs.getInt("stock_level")
-                        ));
-                    }
-                }
-                request.setAttribute("fruits", fruits);
-                request.getRequestDispatcher("fruitList.jsp").forward(request, response);
             }
         } catch (SQLException e) {
             session.setAttribute("connectionStatus", "Database error: " + e.getMessage());
@@ -244,9 +295,9 @@ public class FruitServlet extends HttpServlet {
                     throw new SQLException("Borrow failed: Distance too far. Can only borrow from same city (" + borrowCity + ").");
                 }
 
-                String checkSql = "SELECT bi.stock_level, f.name, bi.source_city " +
-                        "FROM branch_inventory bi JOIN fruits f ON bi.fruit_name = f.name AND bi.source_city = f.source_city " +
-                        "WHERE f.id = ? AND bi.branch = ?";
+                String checkSql = "SELECT bi.stock_level, f.fruit_name, bi.source_city " +
+                        "FROM branch_inventory bi JOIN fruits f ON bi.fruit_name = f.fruit_name AND bi.source_city = f.source_location " +
+                        "WHERE f.fruit_id = ? AND bi.branch = ?";
                 int availableStock = 0;
                 String fruitName = null;
                 String sourceCity = null;
@@ -256,7 +307,7 @@ public class FruitServlet extends HttpServlet {
                     ResultSet rs = stmt.executeQuery();
                     if (rs.next()) {
                         availableStock = rs.getInt("stock_level");
-                        fruitName = rs.getString("name");
+                        fruitName = rs.getString("fruit_name");
                         sourceCity = rs.getString("source_city");
                     }
                 }
@@ -292,7 +343,7 @@ public class FruitServlet extends HttpServlet {
                     throw new SQLException("Employee branch, city, or ID not found. Please login as shopStaff.");
                 }
 
-                String checkSql = "SELECT stock_level, name, source_city, country FROM fruits WHERE id = ?";
+                String checkSql = "SELECT stock_level, fruit_name, source_location, country FROM fruits WHERE fruit_id = ?";
                 int availableStock = 0;
                 String fruitName = null;
                 String sourceCity = null;
@@ -302,8 +353,8 @@ public class FruitServlet extends HttpServlet {
                     ResultSet rs = stmt.executeQuery();
                     if (rs.next()) {
                         availableStock = rs.getInt("stock_level");
-                        fruitName = rs.getString("name");
-                        sourceCity = rs.getString("source_city");
+                        fruitName = rs.getString("fruit_name");
+                        sourceCity = rs.getString("source_location");
                         country = rs.getString("country");
                     }
                 }

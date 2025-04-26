@@ -25,7 +25,7 @@
         </nav>
         <h1>Borrow Fruit</h1>
 
-        <p class="success"><strong>Database Connection Status:</strong> ${sessionScope.connectionStatus}</p>
+        
 
         <c:if test="${not empty error}">
             <p class="error">${error}</p>

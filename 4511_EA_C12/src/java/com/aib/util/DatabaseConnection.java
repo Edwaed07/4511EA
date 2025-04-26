@@ -15,13 +15,28 @@ public class DatabaseConnection {
             Class.forName("com.mysql.cj.jdbc.Driver");
             System.out.println("MySQL JDBC Driver loaded successfully.");
         } catch (ClassNotFoundException e) {
-            System.err.println("Failed to load MySQL JDBC Driver: " + e.getMessage());
-            e.printStackTrace();
+            try {
+                // 尝试加载旧版驱动
+                Class.forName("com.mysql.jdbc.Driver");
+                System.out.println("Old MySQL JDBC Driver loaded successfully.");
+            } catch (ClassNotFoundException ex) {
+                System.err.println("CRITICAL ERROR: Failed to load any MySQL JDBC Driver!");
+                System.err.println("Error message: " + ex.getMessage());
+                ex.printStackTrace();
+            }
         }
     }
 
     public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(URL, USER, PASSWORD);
+        try {
+            Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+            System.out.println("Database connection established successfully.");
+            return conn;
+        } catch (SQLException e) {
+            System.err.println("Failed to connect to database: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     public static String testConnection() {

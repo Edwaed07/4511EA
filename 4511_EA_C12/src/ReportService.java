@@ -1,4 +1,4 @@
-package your;
+package seniorManager;
 
 import java.sql.*;
 import java.util.ArrayList;

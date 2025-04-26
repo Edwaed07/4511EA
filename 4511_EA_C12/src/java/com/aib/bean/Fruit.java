@@ -1,4 +1,4 @@
-package com.aib.model;
+package com.aib.bean;
 
 import java.util.ArrayList;
 import java.util.HashMap;

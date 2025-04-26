@@ -39,9 +39,7 @@
                 <li><a href="LogoutServlet">Logout</a></li>
             </ul>
         </nav>
-        <h1>Check Reserve Records</h1>
-
-        <p class="success"><strong>Database Connection Status:</strong> ${sessionScope.connectionStatus}</p>
+        <h1>Check Reserve</h1>
 
         <c:if test="${not empty error}">
             <p class="error">${error}</p>
@@ -49,7 +47,6 @@
         <c:if test="${not empty success}">
             <p class="success">${success}</p>
         </c:if>
-
 
         <form action="CheckReserveServlet" method="get" class="filter-form">
             <label for="filter">Filter Records:</label>

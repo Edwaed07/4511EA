@@ -29,14 +29,18 @@ public class CreateAccountServlet extends HttpServlet {
         String password = request.getParameter("password");
         String confirmPassword = request.getParameter("confirmPassword");
         String branch = request.getParameter("branch");
-        String role = "shopStaff";
+        String role = request.getParameter("role");
+        
+        if (role == null || role.isEmpty()) {
+            role = "shopStaff"; // 默认角色
+        }
 
         Connection conn = null;
         try {
             conn = DatabaseConnection.getConnection();
             if (!password.equals(confirmPassword)) {
                 request.setAttribute("error", "Passwords do not match.");
-                request.getRequestDispatcher("createAccount.jsp").forward(request, response);
+                request.getRequestDispatcher("createAccount.jsp?role=" + role).forward(request, response);
                 return;
             }
 
@@ -46,7 +50,7 @@ public class CreateAccountServlet extends HttpServlet {
                 ResultSet rs = stmt.executeQuery();
                 if (rs.next()) {
                     request.setAttribute("error", "Email already exists.");
-                    request.getRequestDispatcher("createAccount.jsp").forward(request, response);
+                    request.getRequestDispatcher("createAccount.jsp?role=" + role).forward(request, response);
                     return;
                 }
             }
@@ -58,13 +62,20 @@ public class CreateAccountServlet extends HttpServlet {
                 stmt.setString(3, password);
                 stmt.setString(4, role);
                 stmt.setString(5, branch);
-                stmt.executeUpdate();
+                int result = stmt.executeUpdate();
+                
+                if (result > 0) {
+                    System.out.println("Account created successfully for " + email + " with role " + role);
+                } else {
+                    System.out.println("Failed to create account");
+                }
             }
 
-            response.sendRedirect("login.jsp?role=shopStaff");
+            response.sendRedirect("login.jsp?role=" + role);
         } catch (SQLException e) {
+            e.printStackTrace();
             request.setAttribute("error", "Database error: " + e.getMessage());
-            request.getRequestDispatcher("createAccount.jsp").forward(request, response);
+            request.getRequestDispatcher("createAccount.jsp?role=" + role).forward(request, response);
         } finally {
             if (conn != null) {
                 try {

@@ -14,15 +14,15 @@
         <nav>
             <ul>
                 <li><a href="index.jsp">Home</a></li>
-                <li><a href="login.jsp?role=${param.role}">Login</a></li>
+                <li><a href="login.jsp?role=shopStaff">Login</a></li>
             </ul>
         </nav>
-        <h1>Sign Up as ${param.role}</h1>
+        <h1>Sign Up as Shop Staff</h1>
         <c:if test="${not empty error}">
             <p class="error">${error}</p>
         </c:if>
         <form action="CreateAccountServlet" method="post" class="login-form">
-            <input type="hidden" name="role" value="${param.role}">
+            <input type="hidden" name="role" value="shopStaff">
             <div class="form-group">
                 <label for="email">Email:</label>
                 <input type="email" id="email" name="email" required>
@@ -46,7 +46,7 @@
             <input type="submit" value="Create Account">
         </form>
         <p style="text-align: center; margin-top: 15px;">
-            <a href="login.jsp?role=${param.role}">Back to Login</a>
+            <a href="login.jsp?role=shopStaff">Back to Login</a>
         </p>
     </div>
     <footer>

@@ -39,8 +39,8 @@ public class ApproveServlet extends HttpServlet {
 
             // 獲取待審批的借貨記錄（員工只能審批自己分店作為借出方的記錄）
             List<Map<String, Object>> pendingBorrowRecords = new ArrayList<>();
-            String borrowSql = "SELECT br.id, br.borrow_branch, br.lender_branch, br.fruit_id, br.quantity, br.borrow_date, br.status, f.fruit_name AS fruit_name, f.source_location AS source_city " +
-                              "FROM borrow_records br JOIN fruits f ON br.fruit_id = f.fruit_id " +
+            String borrowSql = "SELECT br.id, br.borrow_branch, br.lender_branch, br.fruit_id, br.quantity, br.borrow_date, br.status, f.name AS fruit_name, f.source_city " +
+                              "FROM borrow_records br JOIN fruits f ON br.fruit_id = f.id " +
                               "WHERE br.lender_branch = ? AND br.status = 'PENDING'";
             try (PreparedStatement stmt = conn.prepareStatement(borrowSql)) {
                 stmt.setString(1, employeeBranch);
@@ -62,8 +62,8 @@ public class ApproveServlet extends HttpServlet {
 
             // 獲取本分店作為借入方的借貨記錄（僅查看）
             List<Map<String, Object>> myBorrowRecords = new ArrayList<>();
-            String myBorrowSql = "SELECT br.id, br.borrow_branch, br.lender_branch, br.fruit_id, br.quantity, br.borrow_date, br.status, f.fruit_name AS fruit_name, f.source_location AS source_city " +
-                                "FROM borrow_records br JOIN fruits f ON br.fruit_id = f.fruit_id " +
+            String myBorrowSql = "SELECT br.id, br.borrow_branch, br.lender_branch, br.fruit_id, br.quantity, br.borrow_date, br.status, f.name AS fruit_name, f.source_city " +
+                                "FROM borrow_records br JOIN fruits f ON br.fruit_id = f.id " +
                                 "WHERE br.borrow_branch = ?";
             try (PreparedStatement stmt = conn.prepareStatement(myBorrowSql)) {
                 stmt.setString(1, employeeBranch);
@@ -85,8 +85,8 @@ public class ApproveServlet extends HttpServlet {
 
             // 獲取員工分店的訂貨記錄（僅查看）
             List<Map<String, Object>> myReserveRecords = new ArrayList<>();
-            String reserveSql = "SELECT rr.id, rr.branch, rr.fruit_id, rr.quantity, rr.source_city, rr.reserve_date, rr.status, f.fruit_name AS fruit_name " +
-                               "FROM reserve_records rr JOIN fruits f ON rr.fruit_id = f.fruit_id " +
+            String reserveSql = "SELECT rr.id, rr.branch, rr.fruit_id, rr.quantity, rr.source_city, rr.reserve_date, rr.status, f.name AS fruit_name " +
+                               "FROM reserve_records rr JOIN fruits f ON rr.fruit_id = f.id " +
                                "WHERE rr.branch = ?";
             try (PreparedStatement stmt = conn.prepareStatement(reserveSql)) {
                 stmt.setString(1, employeeBranch);
@@ -191,9 +191,9 @@ public class ApproveServlet extends HttpServlet {
                 }
 
                 // 查詢水果的 country 和 source_city，用於插入或更新借入分店的庫存
-                String fruitInfoSql = "SELECT fruit_name, source_location, country " +
+                String fruitInfoSql = "SELECT name, source_city, country " +
                                      "FROM fruits " +
-                                     "WHERE fruit_id = ?";
+                                     "WHERE id = ?";
                 String fruitCountry = null;
                 String fruitSourceCity = null;
                 String fruitNameFromDb = null;
@@ -201,8 +201,8 @@ public class ApproveServlet extends HttpServlet {
                     stmt.setInt(1, fruitId);
                     ResultSet rs = stmt.executeQuery();
                     if (rs.next()) {
-                        fruitNameFromDb = rs.getString("fruit_name");
-                        fruitSourceCity = rs.getString("source_location");
+                        fruitNameFromDb = rs.getString("name");
+                        fruitSourceCity = rs.getString("source_city");
                         fruitCountry = rs.getString("country");
                     } else {
                         throw new SQLException("Fruit not found with ID " + fruitId);

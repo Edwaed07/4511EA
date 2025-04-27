@@ -119,9 +119,9 @@ public class CheckReserveServlet extends HttpServlet {
             // 查詢借貨記錄
             List<BorrowRecord> borrowRecords = new ArrayList<>();
             if (!filter.equals("reserve")) {
-                String borrowSql = "SELECT f.fruit_name AS fruit_name, br.borrow_branch, br.lender_branch, br.quantity, br.borrow_date, br.status " +
+                String borrowSql = "SELECT f.name AS fruit_name, br.borrow_branch, br.lender_branch, br.quantity, br.borrow_date, br.status " +
                                   "FROM borrow_records br " +
-                                  "JOIN fruits f ON br.fruit_id = f.fruit_id " +
+                                  "JOIN fruits f ON br.fruit_id = f.id " +
                                   "WHERE br.borrow_branch = ? OR br.lender_branch = ?";
                 try (PreparedStatement stmt = conn.prepareStatement(borrowSql)) {
                     stmt.setString(1, employeeBranch);
@@ -145,9 +145,9 @@ public class CheckReserveServlet extends HttpServlet {
             // 查詢訂貨記錄
             List<ReserveRecord> reserveRecords = new ArrayList<>();
             if (!filter.equals("borrow")) {
-                String reserveSql = "SELECT f.fruit_name AS fruit_name, rr.branch, rr.source_city, rr.quantity, rr.reserve_date, rr.status " +
+                String reserveSql = "SELECT f.name AS fruit_name, rr.branch, rr.source_city, rr.quantity, rr.reserve_date, rr.status " +
                                    "FROM reserve_records rr " +
-                                   "JOIN fruits f ON rr.fruit_id = f.fruit_id " +
+                                   "JOIN fruits f ON rr.fruit_id = f.id " +
                                    "WHERE rr.branch = ?";
                 try (PreparedStatement stmt = conn.prepareStatement(reserveSql)) {
                     stmt.setString(1, employeeBranch);

@@ -25,6 +25,8 @@
         </nav>
         <h1>Fruit Management (Branch: ${sessionScope.employeeBranch})</h1>
 
+        <p class="success"><strong>Database Connection Status:</strong> ${sessionScope.connectionStatus}</p>
+
         <c:if test="${not empty error}">
             <p class="error">${error}</p>
         </c:if>

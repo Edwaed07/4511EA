@@ -1,6 +1,6 @@
 package com.aib.servlet;
 
-import com.aib.bean.Fruit;
+import com.aib.model.Fruit;
 import com.aib.util.DatabaseConnection;
 import java.io.IOException;
 import java.sql.Connection;

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主機： 127.0.0.1
--- 產生時間： 2025-04-20 18:43:08
+-- 產生時間： 2025-04-26 19:52:16
 -- 伺服器版本： 10.4.32-MariaDB
 -- PHP 版本： 8.1.25
 
@@ -48,7 +48,9 @@ INSERT INTO `borrow_records` (`id`, `borrow_branch`, `lender_branch`, `fruit_id`
 (10, 'TKY1', 'TKY2', 1, 5, '2025-04-19 15:11:53', 'PENDING'),
 (11, 'TKY1', 'TKY2', 11, 5, '2025-04-19 16:15:40', 'PENDING'),
 (12, 'TKY1', 'TKY2', 11, 13, '2025-04-20 13:51:16', 'DELIVERY'),
-(13, 'TKY2', 'TKY1', 1, 7, '2025-04-20 13:54:29', 'REJECTED');
+(13, 'TKY2', 'TKY1', 1, 7, '2025-04-20 13:54:29', 'REJECTED'),
+(14, 'TKY1', 'TKY2', 11, 2, '2025-04-26 14:16:05', 'PENDING'),
+(15, 'TKY2', 'TKY1', 1, 3, '2025-04-26 14:42:07', 'PENDING');
 
 -- --------------------------------------------------------
 
@@ -77,6 +79,7 @@ INSERT INTO `branch_inventory` (`branch`, `fruit_name`, `stock_level`, `source_c
 ('NYC1', 'Watermelon', 180, 'New York', 'USA'),
 ('OSA1', 'Banana', 100, 'Osaka', 'Japan'),
 ('TKY1', 'Apple', 54, 'Tokyo', 'Japan'),
+('TKY1', 'Grape', 1, 'Hong Kong', 'China'),
 ('TKY1', 'Orange', 68, 'Tokyo', 'Japan'),
 ('TKY2', 'Apple', 8, 'Tokyo', 'Japan'),
 ('TKY2', 'Orange', 22, 'Tokyo', 'Japan');
@@ -107,7 +110,9 @@ INSERT INTO `employees` (`id`, `name`, `email`, `password`, `role`, `branch`) VA
 (4, 'David', 'david@4511.com', 'password4', 'seniorManager', NULL),
 (5, 'Eve', 'eve@4511.com', 'password5', 'shopStaff', 'LAX1'),
 (6, 'Frank', 'frank@4511.com', 'password6', 'warehouseStaff', NULL),
-(7, 'qqq', 'd@d', 'a123', 'shopStaff', 'TKY1');
+(7, 'qqq', 'd@d', 'a123', 'shopStaff', 'TKY1'),
+(8, 'YIP', 'ok22@gmail.com', '123456', 'shopStaff', 'TKY2'),
+(9, 'YIP', '852@gmail.com', '123', 'shopStaff', 'TKY2');
 
 -- --------------------------------------------------------
 
@@ -168,7 +173,9 @@ INSERT INTO `reserve_records` (`id`, `branch`, `fruit_id`, `quantity`, `source_c
 (1, 'TKY1', 1, 5, 'Tokyo', '2025-04-20 12:17:16', 'PENDING'),
 (2, 'TKY1', 1, 5, 'Tokyo', '2025-04-20 12:17:23', 'PENDING'),
 (3, 'TKY1', 1, 2, 'Tokyo', '2025-04-20 12:18:10', 'PENDING'),
-(4, 'TKY1', 2, 15, 'Osaka', '2025-04-20 21:52:09', 'PENDING');
+(4, 'TKY1', 2, 15, 'Osaka', '2025-04-20 21:52:09', 'PENDING'),
+(5, 'TKY1', 1, 55, 'Tokyo', '2025-04-25 12:25:41', 'PENDING'),
+(6, 'TKY1', 1, 4, 'Tokyo', '2025-04-26 22:10:44', 'PENDING');
 
 -- --------------------------------------------------------
 
@@ -256,13 +263,13 @@ ALTER TABLE `shops`
 -- 使用資料表自動遞增(AUTO_INCREMENT) `borrow_records`
 --
 ALTER TABLE `borrow_records`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- 使用資料表自動遞增(AUTO_INCREMENT) `employees`
 --
 ALTER TABLE `employees`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- 使用資料表自動遞增(AUTO_INCREMENT) `fruits`
@@ -274,7 +281,7 @@ ALTER TABLE `fruits`
 -- 使用資料表自動遞增(AUTO_INCREMENT) `reserve_records`
 --
 ALTER TABLE `reserve_records`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- 已傾印資料表的限制式

@@ -23,14 +23,14 @@ public class LoginServlet extends HttpServlet {
         String password = request.getParameter("password");
         String role = request.getParameter("role");
 
-        // 驗證輸入參數
+
         if (email == null || email.isEmpty() || password == null || password.isEmpty() || role == null || role.isEmpty()) {
             request.setAttribute("error", "Email, password, and role are required.");
             request.getRequestDispatcher("login.jsp?role=" + role).forward(request, response);
             return;
         }
 
-        // 修正角色映射邏輯，與 index.jsp 傳入的值匹配
+
         String dbRole;
         switch (role) {
             case "warehouseStaff":
@@ -43,14 +43,14 @@ public class LoginServlet extends HttpServlet {
                 dbRole = "shopStaff";
                 break;
             default:
-                dbRole = role; // 如果角色名稱未匹配，保持原樣
+                dbRole = role; 
                 break;
         }
 
         Connection conn = null;
         try {
             conn = DatabaseConnection.getConnection();
-            // 使用 LEFT JOIN 確保即使 branch 為 NULL 也能查詢到記錄
+
             String sql = "SELECT e.id, e.name, e.email, e.role, e.branch, s.source_city " +
                         "FROM employees e LEFT JOIN shops s ON e.branch = s.branch " +
                         "WHERE e.email = ? AND e.password = ? AND e.role = ?";
@@ -68,19 +68,19 @@ public class LoginServlet extends HttpServlet {
                     session.setAttribute("employeeBranch", rs.getString("branch"));
                     session.setAttribute("employeeCity", rs.getString("source_city"));
 
-                    // 設置 "Login successful" 訊息
+
                     session.setAttribute("message", "Login successful");
                     session.setAttribute("messageType", "success");
 
-                    // 根據角色導向不同頁面
+          
                     if ("warehouseStaff".equals(dbRole)) {
                         response.sendRedirect("warehouseHome.jsp");
                     } else if ("seniorManager".equals(dbRole)) {
-                        response.sendRedirect("managementDashboard.jsp");
+                        response.sendRedirect("SeniorManagementHome.jsp");
                     } else if ("shopStaff".equals(dbRole)) {
                         response.sendRedirect("staffHome.jsp");
                     } else {
-                        response.sendRedirect("staffHome.jsp"); // 默認導向
+                        response.sendRedirect("staffHome.jsp"); 
                     }
                 } else {
                     request.setAttribute("error", "Invalid email, password, or role.");

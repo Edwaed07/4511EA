@@ -27,10 +27,10 @@
         </nav>
         <h1>Fruit List</h1>
 
-        <!-- 顯示資料庫連接狀態 -->
+
         <p class="success"><strong>Database Connection Status:</strong> ${connectionStatus}</p>
 
-        <!-- 顯示員工分店 -->
+
         <h2>Borrow Branch: ${sessionScope.employeeBranch}</h2>
 
         <c:if test="${not empty error}">
@@ -40,7 +40,7 @@
             <p class="success">${success}</p>
         </c:if>
 
-        <!-- 使用 JSP Action 顯示水果列表 -->
+
         <table>
             <tr>
                 <th>ID</th>

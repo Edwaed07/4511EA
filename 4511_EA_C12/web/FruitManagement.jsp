@@ -69,7 +69,6 @@
             </form>
         </c:if>
 
-        <!-- 分店庫存清單 -->
         <h2>Branch Inventory</h2>
         <c:if test="${empty inventory}">
             <p class="error">No inventory found for this branch.</p>

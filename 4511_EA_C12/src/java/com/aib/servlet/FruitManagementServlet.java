@@ -38,7 +38,7 @@ public class FruitManagementServlet extends HttpServlet {
 
             String action = request.getParameter("action");
             if ("edit".equals(action)) {
-                // 獲取要編輯的分店庫存記錄
+
                 String fruitName = request.getParameter("fruitName");
                 String sourceCity = request.getParameter("sourceCity");
                 String sql = "SELECT fruit_name, source_city, country, stock_level FROM branch_inventory WHERE branch = ? AND fruit_name = ? AND source_city = ?";
@@ -49,7 +49,7 @@ public class FruitManagementServlet extends HttpServlet {
                     ResultSet rs = stmt.executeQuery();
                     if (rs.next()) {
                         Fruit inventory = new Fruit(
-                            0, // ID 這裡不需要
+                            0, 
                             rs.getString("fruit_name"),
                             rs.getString("source_city"),
                             rs.getString("country"),
@@ -60,24 +60,24 @@ public class FruitManagementServlet extends HttpServlet {
                 }
             }
 
-            // 獲取所有可用的水果（用於新增時選擇）
+
             List<Fruit> availableFruits = new ArrayList<>();
             String fruitSql = "SELECT name, source_city, country FROM fruits";
             try (PreparedStatement stmt = conn.prepareStatement(fruitSql)) {
                 ResultSet rs = stmt.executeQuery();
                 while (rs.next()) {
                     availableFruits.add(new Fruit(
-                        0, // ID 這裡不需要
+                        0, 
                         rs.getString("name"),
                         rs.getString("source_city"),
                         rs.getString("country"),
-                        0 // stockLevel 這裡不需要
+                        0 
                     ));
                 }
             }
             request.setAttribute("availableFruits", availableFruits);
 
-            // 獲取分店庫存清單
+
             List<Fruit> inventory = new ArrayList<>();
             String inventorySql = "SELECT fruit_name, source_city, country, stock_level FROM branch_inventory WHERE branch = ?";
             try (PreparedStatement stmt = conn.prepareStatement(inventorySql)) {
@@ -85,7 +85,7 @@ public class FruitManagementServlet extends HttpServlet {
                 ResultSet rs = stmt.executeQuery();
                 while (rs.next()) {
                     inventory.add(new Fruit(
-                        0, // ID 這裡不需要
+                        0,
                         rs.getString("fruit_name"),
                         rs.getString("source_city"),
                         rs.getString("country"),
@@ -132,14 +132,14 @@ public class FruitManagementServlet extends HttpServlet {
 
             String action = request.getParameter("action");
             if ("create".equals(action)) {
-                // 新增分店庫存
+
                 String fruitSelection = request.getParameter("fruit");
                 String[] fruitParts = fruitSelection.split(":");
                 String fruitName = fruitParts[0];
                 String sourceCity = fruitParts[1];
                 int stockLevel = Integer.parseInt(request.getParameter("stockLevel"));
 
-                // 獲取 country
+
                 String countrySql = "SELECT country FROM fruits WHERE name = ? AND source_city = ?";
                 String country = null;
                 try (PreparedStatement stmt = conn.prepareStatement(countrySql)) {
@@ -157,7 +157,7 @@ public class FruitManagementServlet extends HttpServlet {
                     return;
                 }
 
-                // 檢查是否已存在該水果的分店庫存記錄
+
                 String checkSql = "SELECT stock_level FROM branch_inventory WHERE branch = ? AND fruit_name = ? AND source_city = ?";
                 boolean exists = false;
                 try (PreparedStatement stmt = conn.prepareStatement(checkSql)) {
@@ -168,7 +168,7 @@ public class FruitManagementServlet extends HttpServlet {
                     if (rs.next()) {
                         exists = true;
                         int currentStock = rs.getInt("stock_level");
-                        // 更新庫存
+
                         String updateSql = "UPDATE branch_inventory SET stock_level = stock_level + ? WHERE branch = ? AND fruit_name = ? AND source_city = ?";
                         try (PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
                             updateStmt.setInt(1, stockLevel);
@@ -182,7 +182,7 @@ public class FruitManagementServlet extends HttpServlet {
                 }
 
                 if (!exists) {
-                    // 新增庫存記錄
+
                     String insertSql = "INSERT INTO branch_inventory (branch, fruit_name, source_city, country, stock_level) VALUES (?, ?, ?, ?, ?)";
                     try (PreparedStatement stmt = conn.prepareStatement(insertSql)) {
                         stmt.setString(1, employeeBranch);
@@ -195,7 +195,7 @@ public class FruitManagementServlet extends HttpServlet {
                     }
                 }
             } else if ("update".equals(action)) {
-                // 更新分店庫存
+
                 String fruitName = request.getParameter("fruitName");
                 String sourceCity = request.getParameter("sourceCity");
                 int stockLevel = Integer.parseInt(request.getParameter("stockLevel"));
@@ -214,7 +214,7 @@ public class FruitManagementServlet extends HttpServlet {
                     }
                 }
             } else if ("delete".equals(action)) {
-                // 刪除分店庫存
+
                 String fruitName = request.getParameter("fruitName");
                 String sourceCity = request.getParameter("sourceCity");
 
@@ -232,7 +232,7 @@ public class FruitManagementServlet extends HttpServlet {
                 }
             }
 
-            // 重新獲取分店庫存清單
+
             doGet(request, response);
         } catch (SQLException e) {
             session.setAttribute("connectionStatus", "Database error: " + e.getMessage());

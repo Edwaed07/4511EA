@@ -62,7 +62,7 @@
 
         <h2>Records for Branch: ${sessionScope.employeeBranch}</h2>
 
-        <!-- 借貨記錄 -->
+
         <c:if test="${param.filter != 'reserve' || empty param.filter}">
             <h3>Borrow Records</h3>
             <c:if test="${empty borrowRecords}">
@@ -92,7 +92,7 @@
             </c:if>
         </c:if>
 
-        <!-- 訂貨記錄 -->
+
         <c:if test="${param.filter != 'borrow' || empty param.filter}">
             <h3>Reserve Records</h3>
             <c:if test="${empty reserveRecords}">

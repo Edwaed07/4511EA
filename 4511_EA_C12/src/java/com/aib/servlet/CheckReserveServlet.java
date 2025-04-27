@@ -18,14 +18,14 @@ import javax.servlet.http.HttpSession;
 @WebServlet(name = "CheckReserveServlet", urlPatterns = {"/CheckReserveServlet"})
 public class CheckReserveServlet extends HttpServlet {
 
-    // 借貨記錄類
+
     public static class BorrowRecord {
         private String fruitName;
         private String borrowBranch;
         private String lenderBranch;
         private int quantity;
         private String borrowDate;
-        private String status; // 新增 status 欄位
+        private String status;
 
         public BorrowRecord(String fruitName, String borrowBranch, String lenderBranch, int quantity, String borrowDate, String status) {
             this.fruitName = fruitName;
@@ -51,18 +51,18 @@ public class CheckReserveServlet extends HttpServlet {
         public String getBorrowDate() { return borrowDate; }
         public void setBorrowDate(String borrowDate) { this.borrowDate = borrowDate; }
 
-        public String getStatus() { return status; } // 新增 getter
-        public void setStatus(String status) { this.status = status; } // 新增 setter
+        public String getStatus() { return status; } 
+        public void setStatus(String status) { this.status = status; } 
     }
 
-    // 訂貨記錄類
+
     public static class ReserveRecord {
         private String fruitName;
         private String branch;
         private String sourceCity;
         private int quantity;
         private String reserveDate;
-        private String status; // 新增 status 欄位
+        private String status; 
 
         public ReserveRecord(String fruitName, String branch, String sourceCity, int quantity, String reserveDate, String status) {
             this.fruitName = fruitName;
@@ -88,8 +88,8 @@ public class CheckReserveServlet extends HttpServlet {
         public String getReserveDate() { return reserveDate; }
         public void setReserveDate(String reserveDate) { this.reserveDate = reserveDate; }
 
-        public String getStatus() { return status; } // 新增 getter
-        public void setStatus(String status) { this.status = status; } // 新增 setter
+        public String getStatus() { return status; } 
+        public void setStatus(String status) { this.status = status; } 
     }
 
     @Override
@@ -110,13 +110,13 @@ public class CheckReserveServlet extends HttpServlet {
                 return;
             }
 
-            // 獲取篩選參數
+ 
             String filter = request.getParameter("filter");
             if (filter == null || filter.isEmpty()) {
                 filter = "both";
             }
 
-            // 查詢借貨記錄
+        
             List<BorrowRecord> borrowRecords = new ArrayList<>();
             if (!filter.equals("reserve")) {
                 String borrowSql = "SELECT f.name AS fruit_name, br.borrow_branch, br.lender_branch, br.quantity, br.borrow_date, br.status " +
@@ -134,7 +134,7 @@ public class CheckReserveServlet extends HttpServlet {
                             rs.getString("lender_branch"),
                             rs.getInt("quantity"),
                             rs.getString("borrow_date"),
-                            rs.getString("status") // 新增 status
+                            rs.getString("status") 
                         ));
                     }
                     System.out.println("Borrow Records found: " + borrowRecords.size());
@@ -142,7 +142,7 @@ public class CheckReserveServlet extends HttpServlet {
             }
             request.setAttribute("borrowRecords", borrowRecords);
 
-            // 查詢訂貨記錄
+      
             List<ReserveRecord> reserveRecords = new ArrayList<>();
             if (!filter.equals("borrow")) {
                 String reserveSql = "SELECT f.name AS fruit_name, rr.branch, rr.source_city, rr.quantity, rr.reserve_date, rr.status " +
@@ -159,7 +159,7 @@ public class CheckReserveServlet extends HttpServlet {
                             rs.getString("source_city"),
                             rs.getInt("quantity"),
                             rs.getString("reserve_date"),
-                            rs.getString("status") // 新增 status
+                            rs.getString("status") 
                         ));
                     }
                     System.out.println("Reserve Records found: " + reserveRecords.size());

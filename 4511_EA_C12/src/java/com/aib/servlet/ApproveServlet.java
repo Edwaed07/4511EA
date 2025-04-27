@@ -37,7 +37,7 @@ public class ApproveServlet extends HttpServlet {
                 return;
             }
 
-            // 獲取待審批的借貨記錄（員工只能審批自己分店作為借出方的記錄）
+            
             List<Map<String, Object>> pendingBorrowRecords = new ArrayList<>();
             String borrowSql = "SELECT br.id, br.borrow_branch, br.lender_branch, br.fruit_id, br.quantity, br.borrow_date, br.status, f.name AS fruit_name, f.source_city " +
                               "FROM borrow_records br JOIN fruits f ON br.fruit_id = f.id " +
@@ -60,7 +60,7 @@ public class ApproveServlet extends HttpServlet {
                 }
             }
 
-            // 獲取本分店作為借入方的借貨記錄（僅查看）
+
             List<Map<String, Object>> myBorrowRecords = new ArrayList<>();
             String myBorrowSql = "SELECT br.id, br.borrow_branch, br.lender_branch, br.fruit_id, br.quantity, br.borrow_date, br.status, f.name AS fruit_name, f.source_city " +
                                 "FROM borrow_records br JOIN fruits f ON br.fruit_id = f.id " +
@@ -83,7 +83,7 @@ public class ApproveServlet extends HttpServlet {
                 }
             }
 
-            // 獲取員工分店的訂貨記錄（僅查看）
+
             List<Map<String, Object>> myReserveRecords = new ArrayList<>();
             String reserveSql = "SELECT rr.id, rr.branch, rr.fruit_id, rr.quantity, rr.source_city, rr.reserve_date, rr.status, f.name AS fruit_name " +
                                "FROM reserve_records rr JOIN fruits f ON rr.fruit_id = f.id " +
@@ -155,7 +155,7 @@ public class ApproveServlet extends HttpServlet {
             int quantity = Integer.parseInt(request.getParameter("quantity"));
 
             if ("approve".equals(action)) {
-                // 檢查借出分店的庫存是否仍然足夠
+
                 String checkSql = "SELECT bi.stock_level " +
                                  "FROM branch_inventory bi " +
                                  "WHERE bi.branch = ? AND bi.fruit_name = ? AND bi.source_city = ?";
@@ -176,7 +176,7 @@ public class ApproveServlet extends HttpServlet {
                     throw new SQLException("Invalid quantity or insufficient stock in branch " + lenderBranch);
                 }
 
-                // 更新借出分店庫存（減少 stock_level）
+
                 String updateLenderSql = "UPDATE branch_inventory SET stock_level = stock_level - ? " +
                                         "WHERE branch = ? AND fruit_name = ? AND source_city = ?";
                 try (PreparedStatement stmt = conn.prepareStatement(updateLenderSql)) {
@@ -190,7 +190,7 @@ public class ApproveServlet extends HttpServlet {
                     }
                 }
 
-                // 查詢水果的 country 和 source_city，用於插入或更新借入分店的庫存
+                
                 String fruitInfoSql = "SELECT name, source_city, country " +
                                      "FROM fruits " +
                                      "WHERE id = ?";
@@ -209,7 +209,7 @@ public class ApproveServlet extends HttpServlet {
                     }
                 }
 
-                // 更新借入分店庫存（增加 stock_level）
+
                 String upsertBorrowSql = "INSERT INTO branch_inventory (branch, fruit_name, source_city, stock_level, country) " +
                                         "VALUES (?, ?, ?, ?, ?) " +
                                         "ON DUPLICATE KEY UPDATE stock_level = stock_level + ?";
@@ -223,7 +223,7 @@ public class ApproveServlet extends HttpServlet {
                     stmt.executeUpdate();
                 }
 
-                // 更新借貨記錄狀態為 DELIVERY
+
                 String updateStatusSql = "UPDATE borrow_records SET status = 'DELIVERY' WHERE id = ? AND lender_branch = ? AND status = 'PENDING'";
                 try (PreparedStatement stmt = conn.prepareStatement(updateStatusSql)) {
                     stmt.setInt(1, recordId);
@@ -236,7 +236,7 @@ public class ApproveServlet extends HttpServlet {
                     }
                 }
             } else if ("reject".equals(action)) {
-                // 拒絕借貨請求，更新狀態為 REJECTED（無需回滾庫存，因為尚未扣除）
+
                 String updateStatusSql = "UPDATE borrow_records SET status = 'REJECTED' WHERE id = ? AND lender_branch = ? AND status = 'PENDING'";
                 try (PreparedStatement stmt = conn.prepareStatement(updateStatusSql)) {
                     stmt.setInt(1, recordId);

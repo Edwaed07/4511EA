@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+    
+    <!-- 首页 -->
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+    </welcome-file-list>
+    
+    <!-- 登录Servlet -->
+    <servlet>
+        <servlet-name>WarehouseLoginServlet</servlet-name>
+        <servlet-class>controller.WarehouseLoginServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>WarehouseLoginServlet</servlet-name>
+        <url-pattern>/warehouse/login</url-pattern>
+    </servlet-mapping>
+    
+    <!-- 注册Servlet -->
+    <servlet>
+        <servlet-name>WarehouseRegisterServlet</servlet-name>
+        <servlet-class>controller.WarehouseRegisterServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>WarehouseRegisterServlet</servlet-name>
+        <url-pattern>/warehouse/register</url-pattern>
+    </servlet-mapping>
+    
+    <!-- 仪表板Servlet -->
+    <servlet>
+        <servlet-name>WarehouseDashboardServlet</servlet-name>
+        <servlet-class>controller.WarehouseDashboardServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>WarehouseDashboardServlet</servlet-name>
+        <url-pattern>/warehouse/dashboard</url-pattern>
+    </servlet-mapping>
+    
+    <!-- 库存管理Servlet -->
+    <servlet>
+        <servlet-name>InventoryUpdateServlet</servlet-name>
+        <servlet-class>controller.InventoryUpdateServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>InventoryUpdateServlet</servlet-name>
+        <url-pattern>/warehouse/inventory</url-pattern>
+    </servlet-mapping>
+    
+    <!-- 预订管理Servlet -->
+    <servlet>
+        <servlet-name>ReserveManagementServlet</servlet-name>
+        <servlet-class>controller.ReserveManagementServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ReserveManagementServlet</servlet-name>
+        <url-pattern>/warehouse/reserves</url-pattern>
+    </servlet-mapping>
+    
+    <!-- 交付管理Servlet -->
+    <servlet>
+        <servlet-name>DeliveryServlet</servlet-name>
+        <servlet-class>controller.DeliveryServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DeliveryServlet</servlet-name>
+        <url-pattern>/warehouse/deliveries</url-pattern>
+    </servlet-mapping>
+    
+    <!-- 会话配置 -->
+    <session-config>
+        <session-timeout>
+            30
+        </session-timeout>
+    </session-config>
+    
+    <!-- 错误页面 -->
+    <error-page>
+        <error-code>404</error-code>
+        <location>/error.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>500</error-code>
+        <location>/error.jsp</location>
+    </error-page>
+    
+</web-app> 

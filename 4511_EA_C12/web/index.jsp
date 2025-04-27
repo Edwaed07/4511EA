@@ -20,7 +20,7 @@
         <div class="role-selection">
             <p><a href="login.jsp?role=shopStaff">Bakery Shop Staff</a></p>
             <p><a href="login.jsp?role=warehouseStaff">Warehouse Staff</a></p>
-            <p><a href="login.jsp?role=seniorManagement">Senior Management</a></p>
+            <p><a href="login.jsp?role=seniorManager">Senior Management</a></p>
         </div>
     </div>
     <footer>
